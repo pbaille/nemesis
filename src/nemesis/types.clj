@@ -84,7 +84,6 @@
     (def preds-symbols
       {:fun `fn?
        :vec `vector?
-       ;:seq `seq?
        :seq `seq?
        :set `set?
        :map `map? #_`u/holymap?

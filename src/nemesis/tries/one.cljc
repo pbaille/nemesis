@@ -2,7 +2,8 @@
   (:require [nemesis.core
              :as g
              :refer [deft defg generic+ type+ thing]
-             :include-macros true]))
+             :include-macros true]
+            [nemesis.impl.registry :as r]))
 
 (defg g1 [x]
       ;; prim type impl
@@ -158,3 +159,17 @@
        (bub 1 1))))
 
 
+(defg pouet [x]
+      :map [:map x]
+      :hash [:hash x]
+      [:default x]
+      )
+
+(require '[nemesis.impl.registry :as r]
+         '[nemesis.impl.utils :as u])
+
+(u/pp (r/get-spec 'pouet))
+
+(pouet {:a 1 :b 2})
+(pouet #{:a 1 :b 2})
+(pouet 42)

@@ -1,7 +1,6 @@
 (ns nemesis.impl.utils
   (:refer-clojure :exclude [empty])
   (:require [clojure.pprint :as pp]
-            [clojure.test :as test]
             [clojure.walk :as walk]
             [nemesis.state :as state]))
 
@@ -192,11 +191,8 @@
 
 
 (defmacro defmac
-  "personal defmacro
-   define a regular macro
-   but also a function that do the same thing as the macro
-   (when receiving quoted args)
-   here I hope that it could ease macro composition and later ckish embeddings
+  "define a regular macro
+   but also a function that do the same thing as the macro (when receiving quoted args)
    note that if used from clojurescript, body have to contain only functions that are defined both in clojure and clojurescript"
   [& body]
   (when-not (:ns &env) ;; defmac emits nil in cljs
