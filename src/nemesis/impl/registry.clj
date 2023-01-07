@@ -26,7 +26,7 @@
 (defn register-spec! [spec]
   (state/swap! assoc-in [:fns (:fullname spec)] spec))
 
-(defn conj-case
+#_(defn conj-case
   [cases case]
 
   (let [ ;; any? #(= :any (:type %))
@@ -47,10 +47,22 @@
         (conj (remv any? cases) case)
         (conj (remv overiden-case? cases) case)))))
 
+(defn conj-case
+  [cases {:as case :keys [type arity]}]
+
+  (letfn [(overiden-case? [c]
+            (and (= arity (:arity c))
+                 (t/parentof type (:type c))))]
+    (-> (remove overiden-case? cases)
+        (vec)
+        (conj case))))
+
 (defn extension-map [spec]
   (letfn [(expand-case [c]
             (map #(assoc c :class %) (t/classes (:type c))))
           (conj-case [m {:keys [class type arity name]}]
+            (assert (not (contains? m [class arity]))
+                    "several cases for the same class and arity, spec is corrupted")
             (assoc m [class arity]
                      (merge (-> spec :arities (get arity))
                             {:arity arity
@@ -63,8 +75,7 @@
 (defn extend-spec
   [spec extension-spec]
 
-  (assert (every? (or (-> spec :arities keys set)
-                      (fn [x] (println "should not be here (generics/extend-spec") true))
+  (assert (every? (-> spec :arities keys set)
                   (-> extension-spec :arities keys))
           "unknown arity")
 

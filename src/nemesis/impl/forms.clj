@@ -116,15 +116,17 @@
 (defn function-definition
   [{:keys [name arities]}]
   `(defn ~name
-     ~@(mapv (fn [{:keys [variadic argv method-name protocol-name default]}]
+     ~@(mapv (fn [{:keys [variadic argv method-name protocol-name default error-form]}]
                (list
                 (if variadic
                   (u/argv_variadify argv)
                   argv)
                 `(if (satisfies? ~protocol-name ~(first argv))
                    (~method-name ~@argv)
-                   (let ~(vec (interleave (:argv default) argv))
-                     ~(:expr default)))))
+                   ~(if default
+                      `(let ~(vec (interleave (:argv default) argv))
+                            ~(:expr default))
+                      ~error-form))))
              (vals arities))))
 
 
@@ -176,12 +178,12 @@
        only the generics impacted by this change will be synced"
       [xs]
       (let [sync? #(seq (set/intersection (set xs) (set %)))]
-        (do ;p/prob 'sync-form
-          (cons 'do
-                (mapv (fn [[name ts]]
-                        #_(println "sync-types-form " (sync? ts) (pr-str name))
-                        (when (sync? ts) (protocol-extension (reg/get-spec! name))))
-                      (implementers-map)))))))
+        (cons 'do
+              (mapv (fn [[name ts]]
+                      #_(println "sync-types-form " (sync? ts) (pr-str name))
+                      ;; TODO we could emit only whats needed instead of all impls...
+                      (when (sync? ts) (protocol-extension (reg/get-spec! name))))
+                    (implementers-map))))))
 
 (do :implement
 

@@ -8,10 +8,15 @@ generic+'s default case do not work properly DONE
 
 removing the :any typetag should decrease code complexity DONE 
 
-extracting default case from regular cases
-each arity has exactly once that cannot be overiden
+extracting default case from regular cases DONE 
 
-3 modes of extension
+### forking
+
+how to represent a forked spec in the compile time registry ?
+is an alias is enough ?
+prototypes runtime atom could keep track of actual implementations 
+
+### 3 modes of extension
 
 extend : will only add implementations, no overiding of any sort, most safe (totally safe if no default impl)
 tune : like extend with the ability to precise some implementations (if :coll implements g, we can extend g to :vec)  (can break existing code)
@@ -20,6 +25,8 @@ patch  : like tune with the ability to overide methods entirely (least safe)
 extend and tune modes are just doing extra checks over the most permisive mode patch
 
 some generics could disallow extension entirely
+
+### 
 
 Since we've introduced a runtime state that holds implementations at runtime, we could add some facilities
 to wrap/upd behavior at the generic or implementation level

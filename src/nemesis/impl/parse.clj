@@ -42,14 +42,15 @@
       [name [argv & body]]
       (let [variadic (u/argv_variadic? argv)
             argv (if variadic (u/argv_unvariadify argv) argv)
-            {:keys [cases default]} (parse-arity-body body)
-            default (or default (no-implementation-error-form name argv))]
+            {:as parsed :keys [cases]} (parse-arity-body body)]
         (merge
-          {:arity (count argv)
-           :argv argv
-           :cases cases
-           :default default}
-          (when variadic {:variadic variadic}))))
+         {:arity (count argv)
+          :argv argv
+          :cases cases
+          :variadic variadic}
+          (if (contains? parsed :default)
+            {:default (:default parsed)}
+            {:error-form (no-implementation-error-form name argv)}))))
 
 
     (defn arities->cases
@@ -64,17 +65,20 @@
 
 
     (defn arity-map
-      [{:as _names :keys [protocol-prefix method-prefix]}
+      [{:as _names :keys [name protocol-prefix method-prefix]}
        arities]
       (->> (group-by :arity arities)
            (map (fn [[arity xs]]
                   (assert (apply = (map :variadic xs))
                           (str `arity-map ": inconsistent arity " arity "\n" xs))
-                  [arity {:default (if-some [{:keys [default argv]} (first (filter :default xs))] {:expr default :argv argv})
-                          :protocol-name (u/name_arify protocol-prefix arity)
-                          :method-name (u/name_arify method-prefix arity)
-                          :argv (u/argv_litt arity)
-                          :variadic (:variadic (first xs))}]))
+                  (let [argv-litt (u/argv_litt arity)]
+                    [arity (merge {:protocol-name (u/name_arify protocol-prefix arity)
+                                   :method-name (u/name_arify method-prefix arity)
+                                   :argv argv-litt
+                                   :variadic (:variadic (first xs))}
+                                  (if-some [{:keys [default argv]} (first (filter :default xs))]
+                                    {:default {:expr default :argv argv}}
+                                    {:error-form (no-implementation-error-form name argv-litt)}))])))
            (into {})))
 
 
@@ -126,7 +130,8 @@
 
          (if ad-hoc
            (assert (not (some :default (vals arity-map)))
-                   "default case can only be defined on generic creation (nemesis.core/defg)"))
+                   (str "default case can only be defined on generic creation (nemesis.core/defg)"
+                        arity-map)))
 
          (compile-cases
            (merge names
