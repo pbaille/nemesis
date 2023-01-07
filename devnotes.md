@@ -4,9 +4,9 @@ this code came from the glycogen project
 
 ## TODO
 
-generic+'s default case do not work properly
+generic+'s default case do not work properly DONE
 
-removing the :any typetag should decrease code complexity
+removing the :any typetag should decrease code complexity DONE 
 
 extracting default case from regular cases
 each arity has exactly once that cannot be overiden

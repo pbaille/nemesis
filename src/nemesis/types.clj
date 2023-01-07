@@ -58,6 +58,7 @@
            :key 'Keyword
            :entry 'MapEntry))
 
+
         (def cljs-colls
           '{:seq #{ArrayNodeSeq ChunkedCons ChunkedSeq
                    Cons Cycle ES6IteratorSeq EmptyList

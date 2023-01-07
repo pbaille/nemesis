@@ -20,7 +20,8 @@
   [name & cases]
   (forms/extension
    (parse/parse (cons (state/qualify-symbol name) cases)
-                {:extension-ns (u/ns-sym)})))
+                {:extension-ns (u/ns-sym)
+                 :ad-hoc true})))
 
 (u/defmac implements?
   "test if something implements one or several generics"

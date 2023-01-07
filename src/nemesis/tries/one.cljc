@@ -16,7 +16,7 @@
    ;; group litteral can be handy
    #{:key :sym} "I am key-or-sym"
 
-   "not implemented")
+   "Who am I ?")
 
 
 (assert
@@ -29,35 +29,36 @@
        (g1 '()))
     (= "I am key-or-sym"
        (g1 'a)
-       (g1 :a))))
+       (g1 :a))
+    (= "Who am I ?"
+       (g1 1))))
 
 ;; extension
 (generic+ g1 [x]
           ;; str impl
-          :str ["str" x]
-          ;; if a last expresion is given it extends Object
-          [:unknown x])
+          :str ["str" x])
 
 (assert
-  (and
-    (g1 "a")
-    (nil? (g/implements? (atom {}) g1))
-    (g1 (atom {}))))
+  (= (g1 "a")
+     ["str" "a"]))
 
+;; cannot overide or define the default implementation after creation
+
+'(throws (generic+ g1 [x] "overiden default"))
 
 ;; poly arity exemple
 (defg g2
-      ([x y]
-       :vec [:g2vec x y]
-       :num [:g2num x y]
-       #{:sym :key} [:g2-sym-or-key x y]
-       :coll [:g2coll x y]
-       [:g2any x y])
-      ([x y z]
-       :coll [:coll x y z])
-      ;; variadic arity
-      ([x y z & more]
-       [:variadic x y z more]))
+  ([x y]
+   :vec [:g2vec x y]
+   :num [:g2num x y]
+   #{:sym :key} [:g2-sym-or-key x y]
+   :coll [:g2coll x y]
+   [:g2any x y])
+  ([x y z]
+   :coll [:coll x y z])
+  ;; variadic arity
+  ([x y z & more]
+   [:variadic x y z more]))
 
 (assert
   (and
@@ -84,6 +85,22 @@
        [:g2vec2 [] 1])
     (= (g2 "me" 1 2 3 4)
        [:variadstr "me" 1 2 '(3 4)])))
+
+;; several bindings for the same arity (here 1)
+
+(defg g3
+  ([x] :num [:g3num x] [:g3default x])
+  ([[x & xs]] :line [:g3line x xs]))
+
+
+(assert
+ (and
+   (= (g3 1)
+      [:g3num 1])
+   (= (g3 [1 2 3])
+      [:g3line 1 '(2 3)])
+   (= (g3 "a")
+      [:g3default "a"])))
 
 ;; type+ is like extendtype
 ;; implement several generics at a time for a given type

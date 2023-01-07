@@ -115,7 +115,7 @@
     (defn parse
       ([form] (parse form {}))
       ([[name & body]
-        {:as options :keys [extension-ns lambda-case-compiler]}]
+        {:as options :keys [extension-ns lambda-case-compiler ad-hoc]}]
        (let [doc (when (string? (first body)) (first body))
              body (if doc (rest body) body)
              names (u/name_derive name)
@@ -123,6 +123,10 @@
              cases (arities->cases arities)
              arity-map (arity-map names arities)
              variadic (boolean (some :variadic arities))]
+
+         (if ad-hoc
+           (assert (not (some :default (vals arity-map)))
+                   "default case can only be defined on generic creation (nemesis.core/defg)"))
 
          (compile-cases
            (merge names
