@@ -29,43 +29,52 @@
         (last couples)
         (no-implementation-error-form name argv)))
 
+    (defn parse-arity-body [body]
+      (letfn [(pairs [xs]
+                (reverse (partition 2 xs)))]
+        (if (even? (count body))
+          {:cases (pairs body)}
+          {:default (last body)
+           :cases (pairs (butlast body))})))
+
 
     (defn arity
-      [name [argv & couples]]
+      [name [argv & body]]
       (let [variadic (u/argv_variadic? argv)
             argv (if variadic (u/argv_unvariadify argv) argv)
-            default (arity-default-expr name argv couples)]
+            {:keys [cases default]} (parse-arity-body body)
+            default (or default (no-implementation-error-form name argv))]
         (merge
           {:arity (count argv)
            :argv argv
-           :cases (reverse (partition 2 couples))
+           :cases cases
            :default default}
           (when variadic {:variadic variadic}))))
 
 
     (defn arities->cases
       [parsed-arities]
-      (mapcat (fn [{:as a :keys [cases default]}]
-                (let [a (dissoc a :cases :default)]
+      (mapcat (fn [{:as a :keys [cases]}]
+                (let [case0 (dissoc a :cases :default)]
                   (reduce
-                    (fn [cases [t e]]
-                      (conj cases
-                            (assoc a :type t :expr e)))
-                    [(assoc a :type :any
-                              :expr default
-                              :default true)]
-                    cases)))
+                         (fn [cases [t e]]
+                           (conj cases (assoc case0 :type t :expr e)))
+                         [] cases)))
               parsed-arities))
 
 
     (defn arity-map
       [{:as _names :keys [protocol-prefix method-prefix]}
        arities]
-      (->> arities
-           (map (fn [arity]
-                  [arity {:protocol-name (u/name_arify protocol-prefix arity)
+      (->> (group-by :arity arities)
+           (map (fn [[arity xs]]
+                  (assert (apply = (map :variadic xs))
+                          (str `arity-map ": inconsistent arity " arity "\n" xs))
+                  [arity {:default (if-some [{:keys [default argv]} (first (filter :default xs))] {:expr default :argv argv})
+                          :protocol-name (u/name_arify protocol-prefix arity)
                           :method-name (u/name_arify method-prefix arity)
-                          :argv (u/argv_litt arity)}]))
+                          :argv (u/argv_litt arity)
+                          :variadic (:variadic (first xs))}]))
            (into {})))
 
 
@@ -74,16 +83,18 @@
                 (apply = varities)
                 true)
               "several variadic arities with different length")
-      (merge {:arities (set (map :arity cases))}
+      (merge {:arity->default (into {} (map (juxt :arity :default) cases))}
              (when (boolean (some :variadic cases))
                {:variadic true})))
 
 
+    (defn arities [name body]
+      (map (partial arity name)
+           (normalize-body body)))
+
     (defn body->cases [name body]
       (arities->cases
-        (map (partial arity name)
-             (normalize-body body))))
-
+       (arities name body)))
 
     (defn compile-cases
 
@@ -108,16 +119,24 @@
        (let [doc (when (string? (first body)) (first body))
              body (if doc (rest body) body)
              names (u/name_derive name)
-             cases (body->cases name body)
-             cases-summary (cases-summary cases)
-             arity-map (arity-map names (:arities cases-summary))]
+             arities (arities name body)
+             cases (arities->cases arities)
+             arity-map (arity-map names arities)
+             variadic (boolean (some :variadic arities))]
 
          (compile-cases
            (merge names
-                  cases-summary
                   {:doc doc
                    :cases cases
+                   :variadic variadic
                    :arities arity-map})
            options))))
 
     )
+(arities 'yo '([x] :yo))
+(arities 'yo '([x] :vec :yovec :yo))
+(comment :scratch
+
+         (parse '(yo "doc" [x] :vec :yovec :yo))
+         (parse '(yo "doc" [x] :vec :yovec))
+         (parse '(yo [x] :yo)))

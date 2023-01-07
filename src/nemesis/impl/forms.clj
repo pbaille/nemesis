@@ -3,11 +3,12 @@
             [nemesis.impl.utils :as u]
             [nemesis.impl.registry :as reg]
             [nemesis.state :as state]
-            [clojure.core :as c]))
+            [clojure.core :as c]
+            [clojure.set :as set]))
 
 (defn prototype_registering
-  [{:as spec :keys [fullname arities]}
-   {:as case :keys [compiled arity type ns]}]
+  [{:as _spec :keys [fullname]}
+   {:as _case :keys [compiled arity type]}]
   (let [form (fn [type]
                `(swap! nemesis.core/prototypes
                        assoc-in
@@ -26,14 +27,14 @@
 (do :cljs-extend
 
     (let [cljs-base-type
-          {nil "null"
-           'object "object"
-           'string "string"
-           'number "number"
-           'array "array"
+          {nil       "null"
+           'object   "object"
+           'string   "string"
+           'number   "number"
+           'array    "array"
            'function "function"
-           'boolean "boolean"
-           'default "_"}
+           'boolean  "boolean"
+           'default  "_"}
 
           protocol-prefix
           (fn [psym]
@@ -49,7 +50,7 @@
                   name (name psym)
                   prefix (protocol-prefix (symbol ns name))]
               {:sentinel prefix
-               :method (str prefix (munge method-name) "$arity$" arity)}))]
+               :method   (str prefix (munge method-name) "$arity$" arity)}))]
 
       (defn cljs-extend1 [class protocol method arity impl]
         (if (cljs-base-type class)
@@ -64,28 +65,28 @@
   [{:as spec :keys [ns fullname]}]
 
   (mapv
-    (fn [[[class arity]
-          {:keys [type protocol-name method-name]}]]
+   (fn [[[class arity]
+         {:keys [type protocol-name method-name]}]]
 
-      (let [type (if (set? type) (first type) type)
-            impl `(get-in @nemesis.core/prototypes [~type '~fullname ~arity])]
+     (let [type (if (set? type) (first type) type)
+           impl `(get-in @nemesis.core/prototypes [~type '~fullname ~arity])]
 
-        (if (state/cljs?)
+       (if (state/cljs?)
 
-          (cljs-extend1 class (u/with-ns ns protocol-name)
-                        method-name arity impl)
-          (list 'do
-                (when class (list `c/import (list 'quote class)))
-                (list `c/extend class
-                      (u/with-ns ns protocol-name)
-                      {(keyword method-name) impl})))))
+         (cljs-extend1 class (u/with-ns ns protocol-name)
+                       method-name arity impl)
+         (list 'do
+               (when class (list `c/import (list 'quote class)))
+               (list `c/extend class
+                     (u/with-ns ns protocol-name)
+                     {(keyword method-name) impl})))))
 
-    (reg/extension-map spec)))
+   (reg/extension-map spec)))
 
 
 (defn protocol-declaration
   [{:keys [arities ns]}]
-  `(do ~@(mapv (fn [[arity {:keys [protocol-name method-name argv]}]]
+  `(do ~@(mapv (fn [[_ {:keys [protocol-name method-name argv]}]]
                  `(defprotocol ~(u/with-ns ns protocol-name)
                     ~(list method-name argv)))
                arities)))
@@ -96,18 +97,35 @@
   `(do ~@(extend-forms spec)))
 
 
-(defn function-definition
+(defn function-definition_initial
   [{:keys [name arities variadic]}]
   (let [arities (sort arities)
-        fixed-arities (if variadic (butlast arities) arities)
-        ]
+        fixed-arities (if variadic (butlast arities) arities)]
     `(defn ~name
-       ~@(mapv (fn [{:keys [argv method-name]}] `(~argv (~method-name ~@argv)))
+       ~@(mapv (fn [{:keys [argv method-name protocol-name default]}]
+                 `(~argv (if (satisfies? ~protocol-name ~(first argv))
+                           (~method-name ~@argv)
+                           ~default)))
                (vals fixed-arities))
        ~@(when variadic
            (let [variadic-arity (val (last arities))
                  vsig (:argv variadic-arity)]
-             [`(~(u/argv_variadify vsig) (~(:method-name variadic-arity) ~@vsig))])))))
+             [`(~(u/argv_variadify vsig)
+                (~(:method-name variadic-arity) ~@vsig))])))))
+
+(defn function-definition
+  [{:keys [name arities]}]
+  `(defn ~name
+     ~@(mapv (fn [{:keys [variadic argv method-name protocol-name default]}]
+               (list
+                (if variadic
+                  (u/argv_variadify argv)
+                  argv)
+                `(if (satisfies? ~protocol-name ~(first argv))
+                   (~method-name ~@argv)
+                   (let ~(vec (interleave (:argv default) argv))
+                     ~(:expr default)))))
+             (vals arities))))
 
 
 (defn extension [spec]
@@ -121,7 +139,7 @@
        ~(prototypes_registering partial-spec)
        ~(protocol-extension partial-spec))))
 
-(defn cleaning [{:as s :keys [ns name arities]}]
+(defn cleaning [{:keys [ns name arities]}]
   `(do
      ~@(mapv (fn [x#] `(ns-unmap '~(symbol ns) '~x#))
              (cons name (mapcat (juxt :method-name :protocol-name) (vals arities))))))
@@ -157,7 +175,7 @@
        xs: the types that have changed
        only the generics impacted by this change will be synced"
       [xs]
-      (let [sync? #(seq (clojure.set/intersection (set xs) (set %)))]
+      (let [sync? #(seq (set/intersection (set xs) (set %)))]
         (do ;p/prob 'sync-form
           (cons 'do
                 (mapv (fn [[name ts]]
@@ -188,7 +206,7 @@
 
     (defn thing_parse-impl-cases
       [[name & cases]]
-      (let [{:as spec :keys [ns method-prefix protocol-prefix]}
+      (let [{:as _spec :keys [ns method-prefix protocol-prefix]}
             (reg/get-spec! name)
             with-clean-pattern
             (fn [x] (update x :pattern (comp vec (partial remove #{'&}))))
@@ -223,16 +241,16 @@
 
     (defn conj-type [reg {:keys [tag childs parents]}]
       (reduce
-        (fn [reg p]
-          (update reg p (fnil conj #{}) tag))
-        (update reg tag (fnil into #{}) childs)
-        parents))
+       (fn [reg p]
+         (update reg p (fnil conj #{}) tag))
+       (update reg tag (fnil into #{}) childs)
+       parents))
 
     (defn deft_impl-bind-fields [fields [name argv & body]]
       (let [[this-sym this-pat]
             (u/binding-pattern_ensure-top-level-sym (first argv) (gensym))]
         `(~name ~(vec (cons this-pat (next argv)))
-           (let [{:keys ~fields} ~this-sym] ~@body))))
+          (let [{:keys ~fields} ~this-sym] ~@body))))
     )
 
 (do :inheritance

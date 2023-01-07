@@ -21,12 +21,12 @@
 
         (def atoms
           (cmap
-            :fun 'clojure.lang.Fn
-            :num 'java.lang.Number
-            :str 'java.lang.String
-            :sym 'clojure.lang.Symbol
-            :key 'clojure.lang.Keyword
-            :entry 'clojure.lang.MapEntry))
+           :fun 'clojure.lang.Fn
+           :num 'java.lang.Number
+           :str 'java.lang.String
+           :sym 'clojure.lang.Symbol
+           :key 'clojure.lang.Keyword
+           :entry 'clojure.lang.MapEntry))
 
         (def colls
           '{:seq #{clojure.lang.ISeq}
@@ -51,20 +51,20 @@
 
         (def cljs-atoms
           (cmap
-            :fun 'function
-            :num 'number
-            :str 'string
-            :sym 'Symbol
-            :key 'Keyword
-            :entry 'MapEntry))
+           :fun 'function
+           :num 'number
+           :str 'string
+           :sym 'Symbol
+           :key 'Keyword
+           :entry 'MapEntry))
 
         (def cljs-colls
           '{:seq #{ArrayNodeSeq ChunkedCons ChunkedSeq
                    Cons Cycle ES6IteratorSeq EmptyList
-                   IndexedSeq Iterate KeySeq LazySeq
+                   IndexedSeq #_#_IntegerRange IntegerRangeChunk Iterate KeySeq LazySeq
                    List NodeSeq PersistentArrayMapSeq
                    PersistentQueue PersistentQueueSeq PersistentTreeMapSeq
-                   RSeq Range #_RangeChunk Repeat ValSeq}
+                   RSeq Range Repeat ValSeq}
             :map #{ObjMap PersistentArrayMap PersistentHashMap PersistentTreeMap}
             :set #{PersistentHashSet PersistentTreeSet}
             :vec #{BlackNode MapEntry PersistentVector RedNode Subvec}})
@@ -125,15 +125,15 @@
        (all-paths x (map vector (keys x))))
       ([x lines]
        (doall
-         (mapcat
-           (fn [l]
-             (let [ll (last l)
-                   xs (seq (get x ll))
-                   overlap (seq (set/intersection (set l) (set xs)))]
-               (cond (not xs) [l]
-                     overlap (u/error "cycle! " l)
-                     :else (all-paths x (map (partial conj l) xs)))))
-           lines))))
+        (mapcat
+         (fn [l]
+           (let [ll (last l)
+                 xs (seq (get x ll))
+                 overlap (seq (set/intersection (set l) (set xs)))]
+             (cond (not xs) [l]
+                   overlap (u/error "cycle! " l)
+                   :else (all-paths x (map (partial conj l) xs)))))
+         lines))))
 
     #_(all-paths)
 
@@ -175,19 +175,14 @@
     (regfn childof
            "is x a child of y?"
            [x y]
-           (and (cond (= :any y) true
-                      (= :any x) false
-                      :else (set/subset? (set (childs x)) (set (childs y))))
-                x)
-           #_((set (childs y)) x))
+           (when (set/subset? (set (childs x)) (set (childs y)))
+             x))
 
     (regfn parentof
            "is x a parent of y?"
            [x y]
-           (and (cond (= :any x) true
-                      (= :any y) false
-                      :else (set/subset? (set (childs y)) (set (childs x))))
-                x)
+           (when (set/subset? (set (childs y)) (set (childs x)))
+             x)
            #_((set (parents y)) x))
 
     (regfn classes
@@ -200,10 +195,9 @@
 
            (cond
 
-             (symbol? t)
-             #_(if *cljs* (symbol? t) (class? t)) [t]
+             (symbol? t) [t]
 
-             (= :any t) (list (if (state/cljs?) 'default 'java.lang.Object))
+             ;; (= :any t) (list (if (state/cljs?) 'default 'java.lang.Object))
 
              (set? t)
              (mapcat #(classes reg %) t)
@@ -222,17 +216,17 @@
        or of the global registry"
       ([] (all-types (get-reg)))
       ([reg]
-       (into #{:any} (u/kset reg))))
+       (into #{} (u/kset reg))))
 
     (def builtin-types
-      (into #{:any} (concat (keys prims) (keys groups))))
+      (into #{} (concat (keys prims) (keys groups))))
 
     (defn split-prims []
       (let [all (get-reg)
             prim? (c/fn [[_ xs]] (c/every? #(c/or (c/nil? %) (c/symbol? %)) xs))]
-        {:prims (into {} (filter prim? all))
+        {:prims  (into {} (filter prim? all))
          :groups (into {} (remove prim? all))
-         :all all}))
+         :all    all}))
     )
 
 (comment :assertions
@@ -240,16 +234,15 @@
          (split-prims)
 
          (p/assert
-           (classes :nil)
-           (classes :coll)
-           (classes :prim)
-           (classes :any)
-           (classes :sym)
-           (classes #{:sym :key}))
+          (classes :nil)
+          (classes :coll)
+          (classes :prim)
+          (classes :sym)
+          (classes #{:sym :key}))
 
          (p/assert
-           (parents :vec)
-           (childs :coll))
+          (parents :vec)
+          (childs :coll))
 
          (childof :coll :vec)
          (childof :vec :coll)
@@ -261,9 +254,6 @@
          (parentof #{:word :coll} #{:sym :str})
          (parentof :vec :vec)
          (childof :vec :vec)
-         (childof :vec :any)
-         (parentof :vec :any)
-         (childs :any)
          )
 
 (do :preds
@@ -299,7 +289,7 @@
           (list `instance? k gsym)
           (if-let [members (reg k)]
             (symbolic-preds->or-form
-              (map #(symbolic-pred-body reg % gsym) members))))))
+             (map #(symbolic-pred-body reg % gsym) members))))))
 
     #_(symbolic-pred-body @reg :hash 'x)
 
@@ -319,10 +309,10 @@
             (when ~(symbolic-pred-body reg k gsym) ~gsym)))))
 
     (comment
-      (symbolic-pred (get-reg) :map)
-      (symbolic-pred :map)
-      (symbolic-pred :uk)
-      (symbolic-pred (get-reg) :hash '(heavy-computation)))
+     (symbolic-pred (get-reg) :map)
+     (symbolic-pred :map)
+     (symbolic-pred :uk)
+     (symbolic-pred (get-reg) :hash '(heavy-computation)))
     #_(symbolic-pred (assoc (get-reg) :iop #{:hash 'clojure.lang.AMapEntry})
                      :iop)
 
@@ -357,13 +347,13 @@
              (set? t) `(or ~@(map (fn [t] (macroexpand (list `isa t x))) t)))))
 
     #_(p/assert
-        (isa :any)
-        (isa :line ())
-        (isa :line [1 2 3])
-        (not (isa :line {}))
-        (isa :word 'a)
-        (isa #{:sym :key} 'a)
-        ((isa :word) :pouet))
+       (isa :any)
+       (isa :line ())
+       (isa :line [1 2 3])
+       (not (isa :line {}))
+       (isa :word 'a)
+       (isa #{:sym :key} 'a)
+       ((isa :word) :pouet))
 
     )
 
@@ -371,104 +361,104 @@
 
 (comment
 
-  ;; glycogen.types is a thin and simple layer on top of clojure's class hierarchy
-  ;; lets first inpect the registry, which old the state of the system
+ ;; glycogen.types is a thin and simple layer on top of clojure's class hierarchy
+ ;; lets first inpect the registry, which old the state of the system
 
-  (clojure.pprint/pprint (get-reg))
-  (classes :path)
+ (clojure.pprint/pprint (get-reg))
+ (classes :path)
 
-  ;; looks like:
-  '{:num #{java.lang.Number},
-    :fun #{clojure.lang.Fn},
-    :seq #{clojure.lang.ISeq},
-    :hash #{:set :map},
-    :vec #{clojure.lang.IPersistentVector},
-    :key #{clojure.lang.Keyword},
-    :coll #{:seq :vec :set :map},
-    :sym #{clojure.lang.Symbol},
-    :str #{java.lang.String},
-    :line #{:seq :vec},
-    :word #{:key :sym :str},
-    :nil #{nil},
-    :set #{clojure.lang.IPersistentSet},
-    :atom #{:num :fun :key :sym :str},
-    :map
-    #{clojure.lang.PersistentArrayMap clojure.lang.PersistentHashMap},
-    :prim #{:num :fun :seq :vec :key :sym :str :nil :set :map}}
+ ;; looks like:
+ '{:num  #{java.lang.Number},
+   :fun  #{clojure.lang.Fn},
+   :seq  #{clojure.lang.ISeq},
+   :hash #{:set :map},
+   :vec  #{clojure.lang.IPersistentVector},
+   :key  #{clojure.lang.Keyword},
+   :coll #{:seq :vec :set :map},
+   :sym  #{clojure.lang.Symbol},
+   :str  #{java.lang.String},
+   :line #{:seq :vec},
+   :word #{:key :sym :str},
+   :nil  #{nil},
+   :set  #{clojure.lang.IPersistentSet},
+   :atom #{:num :fun :key :sym :str},
+   :map
+         #{clojure.lang.PersistentArrayMap clojure.lang.PersistentHashMap},
+   :prim #{:num :fun :seq :vec :key :sym :str :nil :set :map}}
 
-  ;; cljs
-  (binding [*cljs* true]
-    (clojure.pprint/pprint (get-reg))
-    (-> (get-reg) :num first type))
+ ;; cljs
+ (binding [*cljs* true]
+   (clojure.pprint/pprint (get-reg))
+   (-> (get-reg) :num first type))
 
-  ;; so we use keyword to represent what I will refer from now as 'typetags'
+ ;; so we use keyword to represent what I will refer from now as 'typetags'
 
-  ;; in the registry the keys are the typetags of our system
-  ;; registry values are sets of classes and/or typetags which represent the members of the corresponding typetag
-  ;; any instance of one of its members belongs to the parent type
+ ;; in the registry the keys are the typetags of our system
+ ;; registry values are sets of classes and/or typetags which represent the members of the corresponding typetag
+ ;; any instance of one of its members belongs to the parent type
 
-  ;; you can extend the registry like this
+ ;; you can extend the registry like this
 
-  ;; adding a typetag
-  (tag+ :char ;; the introduced typetag
-        [java.lang.Character] ;; the classes|typetags that belongs to it
-        [:prim :atom] ;; the typetags belongs to
-        )
+ ;; adding a typetag
+ (tag+ :char ;; the introduced typetag
+       [java.lang.Character] ;; the classes|typetags that belongs to it
+       [:prim :atom] ;; the typetags belongs to
+       )
 
-  ;; enriching or declaring a typetag
-  (tag+ :hash ;; the introduced or enriched typetag
-        [:map :set] ;; the members that belongs to it
-        )
+ ;; enriching or declaring a typetag
+ (tag+ :hash ;; the introduced or enriched typetag
+       [:map :set] ;; the members that belongs to it
+       )
 
-  ;; there is also a way to create clojure record along with declaring a new typetag
-  (type+ :pouet ;; declare a new typetag :pouet for a the record Pouet (created)
-         [iop foo] ;; with two fields
-         [:hash] ;; belongs to the hash type
-         (g1 [x] "g1foo")) ;; implement some generic function (see glycogen.generics)
+ ;; there is also a way to create clojure record along with declaring a new typetag
+ (type+ :pouet ;; declare a new typetag :pouet for a the record Pouet (created)
+        [iop foo] ;; with two fields
+        [:hash] ;; belongs to the hash type
+        (g1 [x] "g1foo")) ;; implement some generic function (see glycogen.generics)
 
-  #_(map type ((get-reg) :pouet))
-  ;; inspection utilities
+ #_(map type ((get-reg) :pouet))
+ ;; inspection utilities
 
-  (childs :hash) ;;=> (:set :map)
+ (childs :hash) ;;=> (:set :map)
 
-  (childof :set :hash) ;;=> :set
-  (childof :vec :hash) ;;=> nil
+ (childof :set :hash) ;;=> :set
+ (childof :vec :hash) ;;=> nil
 
-  ;; >= behaves like childof but is also true if the two given typetag are equals
-  (<= :hash :hash) ;;=> :hash
-  (<= :map :hash) ;;=> :map
-  (<= :vec :hash) ;;=> nil
+ ;; >= behaves like childof but is also true if the two given typetag are equals
+ (<= :hash :hash) ;;=> :hash
+ (<= :map :hash) ;;=> :map
+ (<= :vec :hash) ;;=> nil
 
-  (parents :map) ;;=> (:prim :coll :hash)
+ (parents :map) ;;=> (:prim :coll :hash)
 
-  (parentof :hash :map) ;;=> :hash
-  (parentof :hash :vec) ;;=> nil
+ (parentof :hash :map) ;;=> :hash
+ (parentof :hash :vec) ;;=> nil
 
-  ;; >= behaves like parentof but is also true if the two given typetag are equals
-  (>= :hash :hash) ;;=> :hash
-  (>= :hash :map) ;;=> :hash
-  (>= :hash :vec) ;;=> nil
+ ;; >= behaves like parentof but is also true if the two given typetag are equals
+ (>= :hash :hash) ;;=> :hash
+ (>= :hash :map) ;;=> :hash
+ (>= :hash :vec) ;;=> nil
 
-  ;; you can list all classes that belongs to a typetag
+ ;; you can list all classes that belongs to a typetag
 
-  (classes :word) ;;=> (clojure.lang.Keyword clojure.lang.Symbol java.lang.String)
+ (classes :word) ;;=> (clojure.lang.Keyword clojure.lang.Symbol java.lang.String)
 
-  (all-types)
-  ;; #{:num :fun :hash :vec :key :coll :sym
-  ;;   :str :line :word :nil :seq :set :atom
-  ;;   :map :prim :char :any}
+ (all-types)
+ ;; #{:num :fun :hash :vec :key :coll :sym
+ ;;   :str :line :word :nil :seq :set :atom
+ ;;   :map :prim :char :any}
 
-  ;; isa lets you test if something belongs to a typetag
-  (isa :vec []) ;;=> true
-  (isa :vec "aze") ;;=> false
+ ;; isa lets you test if something belongs to a typetag
+ (isa :vec []) ;;=> true
+ (isa :vec "aze") ;;=> false
 
-  ;; isa is kinf of slow, it is enough for non critical application (like compile time stuff)
-  ;; if you want fast typechecks you can use those, for any registry update (prim+, group+) it is recomputed
+ ;; isa is kinf of slow, it is enough for non critical application (like compile time stuff)
+ ;; if you want fast typechecks you can use those, for any registry update (prim+, group+) it is recomputed
 
-  (let [coll? (:coll guards)]
-    (coll? [1 2]) ;;=> [1 2]
-    (coll? "yo") ;;=> nil
-    ))
+ (let [coll? (:coll guards)]
+   (coll? [1 2]) ;;=> [1 2]
+   (coll? "yo") ;;=> nil
+   ))
 
 ()
 

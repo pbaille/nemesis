@@ -3,16 +3,21 @@
              :as g
              :refer [deft defg generic+ type+ thing]
              :include-macros true]
-            [nemesis.impl.registry :as r]))
+            #?(:clj [nemesis.impl.registry :as r])))
+
+#?(:clj (r/display-reg))
 
 (defg g1 [x]
-      ;; prim type impl
-      :vec "I am vec"
-      ;; this type is a group
-      ;; under the hood it implements for all collections
-      :coll ["I am coll" x]
-      ;; group litteral can be handy
-      #{:key :sym} "I am key-or-sym")
+   ;; prim type impl
+   :vec "I am vec"
+   ;; this type is a group
+   ;; under the hood it implements for all collections
+   :coll ["I am coll" x]
+   ;; group litteral can be handy
+   #{:key :sym} "I am key-or-sym"
+
+   "not implemented")
+
 
 (assert
   (and
@@ -31,12 +36,12 @@
           ;; str impl
           :str ["str" x]
           ;; if a last expresion is given it extends Object
-          :any [:unknown x])
+          [:unknown x])
 
 (assert
   (and
     (g1 "a")
-    (g/implements? (atom {}) g1)
+    (nil? (g/implements? (atom {}) g1))
     (g1 (atom {}))))
 
 

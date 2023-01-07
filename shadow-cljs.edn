@@ -1,4 +1,17 @@
-{:deps true
+{:deps {:aliases [:cljs]}
+
+ :dev-http {8080 "public"}
+
+ :dependencies
+ []
+
+ :builds
+ {:main
+  {:target :browser
+   :modules {:main {:init-fn nemesis.core/init}}}}}
+
+
+#_{:deps {:aliases [:cljs]}
 
  :nrepl {:port 8777}
 

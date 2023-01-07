@@ -29,13 +29,15 @@
 (defn conj-case
   [cases case]
 
-  (let [any? #(= :any (:type %))
+  (let [ ;; any? #(= :any (:type %))
         same-arity? #(= (:arity case) (:arity %))
         parent? #(t/parentof (:type case) (:type %))
         overiden-case? #(and (same-arity? %) (parent? %) #_(p/prob :overiden %))
         remv (comp vec remove)]
 
-    (if (:default case)
+    (conj (remv overiden-case? cases) case)
+
+    #_(if (:default case)
       (if (or (and (any? case) (some any? cases))
               (some overiden-case? cases))
         cases

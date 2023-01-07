@@ -1,0 +1,9 @@
+{:linters {:missing-else-branch {:level :off}
+           :redundant-do {:level :off}
+           :unused-value {:level :off}
+           :redefined-var {:level :off}
+           :clojure-lsp/unused-public-var {:level :off}}
+ :lint-as {nemesis.impl.utils/defmac clojure.core/defmacro
+           nemesis.core/defg clojure.core/defn
+           nemesis.core/generic+ clojure.core/defn}
+ :hooks {:analyze-call {}}}

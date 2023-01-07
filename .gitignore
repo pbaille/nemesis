@@ -10,3 +10,4 @@ pom.xml
 .cpcache
 .shadow-cljs
 public/js
+.clj-kondo/.cache/

@@ -12,17 +12,15 @@
 (u/defmac defg
   "create a generic function"
   [& form]
-  (do ;;p/pprob
-    (forms/declaration (parse/parse form))))
+  (forms/declaration (parse/parse form)))
 
 (u/defmac generic+
   "add new cases to an existant generic
    all given arities must already be known"
   [name & cases]
-  (do ;p/pprob
-    (forms/extension
-      (parse/parse (cons (state/qualify-symbol name) cases)
-             {:extension-ns (u/ns-sym)}))))
+  (forms/extension
+   (parse/parse (cons (state/qualify-symbol name) cases)
+                {:extension-ns (u/ns-sym)})))
 
 (u/defmac implements?
   "test if something implements one or several generics"

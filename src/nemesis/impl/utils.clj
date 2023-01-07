@@ -10,7 +10,7 @@
 (defn error-form [& xs]
   `(throw (new ~(if (state/cljs?) 'js/Error 'Exception) (str ~@xs))))
 
-(defn pp [& xs] (mapv pp/pprint xs) nil)
+(defn pp [& xs] (mapv pp/pprint xs) (last xs))
 
 (defn pretty-str [& xs] (with-out-str (apply pp xs)))
 
