@@ -12,7 +12,7 @@
     {:clj base
      :cljs base}))
 
-(defonce state (atom state0))
+(def state (atom state0))
 
 ;; a way to compile lambda case diferently if needed
 ;; used in 'with-compiled-cases if no overides given

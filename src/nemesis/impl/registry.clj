@@ -57,20 +57,24 @@
         (vec)
         (conj case))))
 
-(defn extension-map [spec]
+(defn extension-cases
+  [spec]
   (letfn [(expand-case [c]
             (map #(assoc c :class %) (t/classes (:type c))))
-          (conj-case [m {:keys [class type arity name]}]
-            (assert (not (contains? m [class arity]))
-                    "several cases for the same class and arity, spec is corrupted")
+          (conj-case [m {:as case :keys [class type arity name]}]
+            #_(assert (not (contains? m [class arity]))
+                    (str "several cases for the same class and arity, spec is corrupted\n"
+                          case))
             (assoc m [class arity]
                      (merge (-> spec :arities (get arity))
                             {:arity arity
                              :type type
                              :impl-name name})))]
-    (reduce conj-case {}
-            (mapcat expand-case
-                    (:cases spec)))))
+    (->> (:cases spec)
+         (mapcat expand-case)
+         (reduce conj-case {})
+         (map (fn [[[class arity] case]]
+                (assoc case :class class :arity arity))))))
 
 (defn extend-spec
   [spec extension-spec]

@@ -198,7 +198,7 @@
 
              (symbol? t) [t]
 
-             ;; (= :any t) (list (if (state/cljs?) 'default 'java.lang.Object))
+             (= :default t) (if (state/cljs?) '(default) '(java.lang.Object nil))
 
              (set? t)
              (mapcat #(classes reg %) t)
@@ -233,6 +233,8 @@
 (comment :assertions
 
          (split-prims)
+
+         (classes :default)
 
          (p/assert
           (classes :nil)

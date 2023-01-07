@@ -53,35 +53,33 @@
                :method   (str prefix (munge method-name) "$arity$" arity)}))]
 
       (defn cljs-extend1 [class protocol method arity impl]
-        (if (cljs-base-type class)
-          (let [class (if (= 'default class) "_" class)]
-            `(do (goog.object/set ~protocol ~(str class) true)
-                 (goog.object/set ~(u/with-ns (namespace protocol) method) ~(str class) ~impl)))
+        (if-let [class-str (cljs-base-type class)]
+          `(do (goog.object/set ~protocol ~class-str true)
+               (goog.object/set ~(u/with-ns (namespace protocol) method) ~class-str ~impl))
           (let [props (cljs-extend_properties protocol method arity)]
             `(do ~(u/cljs_prototype-assoc-form class (:sentinel props) 'cljs.core/PROTOCOL_SENTINEL)
                  ~(u/cljs_prototype-assoc-form class (:method props) impl)))))))
 
+(defn extension-form
+  [{:as _spec :keys [ns fullname]}
+   {:as _case :keys [class arity type protocol-name method-name]}]
+  (let [type (if (set? type) (first type) type)
+        impl `(get-in @nemesis.core/prototypes [~type '~fullname ~arity])]
+
+    (if (state/cljs?)
+
+      (cljs-extend1 class (u/with-ns ns protocol-name)
+                    method-name arity impl)
+      (list 'do
+            (when class (list `c/import (list 'quote class)))
+            (list `c/extend class
+                  (u/with-ns ns protocol-name)
+                  {(keyword method-name) impl})))))
+
 (defn extend-forms
-  [{:as spec :keys [ns fullname]}]
-
-  (mapv
-   (fn [[[class arity]
-         {:keys [type protocol-name method-name]}]]
-
-     (let [type (if (set? type) (first type) type)
-           impl `(get-in @nemesis.core/prototypes [~type '~fullname ~arity])]
-
-       (if (state/cljs?)
-
-         (cljs-extend1 class (u/with-ns ns protocol-name)
-                       method-name arity impl)
-         (list 'do
-               (when class (list `c/import (list 'quote class)))
-               (list `c/extend class
-                     (u/with-ns ns protocol-name)
-                     {(keyword method-name) impl})))))
-
-   (reg/extension-map spec)))
+  [spec]
+  (mapv (partial extension-form spec)
+        (reg/extension-cases spec)))
 
 
 (defn protocol-declaration
@@ -97,36 +95,15 @@
   `(do ~@(extend-forms spec)))
 
 
-(defn function-definition_initial
-  [{:keys [name arities variadic]}]
-  (let [arities (sort arities)
-        fixed-arities (if variadic (butlast arities) arities)]
-    `(defn ~name
-       ~@(mapv (fn [{:keys [argv method-name protocol-name default]}]
-                 `(~argv (if (satisfies? ~protocol-name ~(first argv))
-                           (~method-name ~@argv)
-                           ~default)))
-               (vals fixed-arities))
-       ~@(when variadic
-           (let [variadic-arity (val (last arities))
-                 vsig (:argv variadic-arity)]
-             [`(~(u/argv_variadify vsig)
-                (~(:method-name variadic-arity) ~@vsig))])))))
-
 (defn function-definition
   [{:keys [name arities]}]
   `(defn ~name
-     ~@(mapv (fn [{:keys [variadic argv method-name protocol-name default error-form]}]
+     ~@(mapv (fn [{:keys [variadic argv method-name]}]
                (list
                 (if variadic
                   (u/argv_variadify argv)
                   argv)
-                `(if (satisfies? ~protocol-name ~(first argv))
-                   (~method-name ~@argv)
-                   ~(if default
-                      `(let ~(vec (interleave (:argv default) argv))
-                            ~(:expr default))
-                      ~error-form))))
+                `(~method-name ~@argv)))
              (vals arities))))
 
 
