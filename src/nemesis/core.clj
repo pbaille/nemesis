@@ -12,16 +12,19 @@
 (u/defmac defg
   "create a generic function"
   [& form]
-  (forms/declaration (parse/parse form)))
+  (let [spec (parse/parse form)]
+    (reg/register-spec! spec)
+    (forms/declaration spec)))
 
 (u/defmac generic+
   "add new cases to an existant generic
    all given arities must already be known"
-  [name & cases]
-  (forms/extension
-   (parse/parse (cons (state/qualify-symbol name) cases)
-                {:extension-ns (u/ns-sym)
-                 :ad-hoc true})))
+  [& form]
+  (let [{:as extension-spec new-cases :cases}
+        (parse/parse form :extension-ns (u/ns-sym))
+        extended-spec (reg/extend-spec! extension-spec)]
+    (forms/extension
+     (assoc extended-spec :cases new-cases))))
 
 (u/defmac implements?
   "test if something implements one or several generics"
@@ -49,6 +52,18 @@
   "like reify but for generics"
   [& impls]
   (forms/thing impls))
+
+(u/defmac fork
+  ([name]
+   `(fork nil ~name))
+  ([new-name original-name]
+   (let [spec (reg/clone-spec! new-name original-name)]
+     (forms/declaration spec))))
+
+(u/defmac fork+
+  [name original-name & impls]
+  `(do (fork ~name ~original-name)
+       (generic+ ~name ~@impls)))
 
 (u/defmac tag+
 

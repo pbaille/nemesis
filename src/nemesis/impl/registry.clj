@@ -3,85 +3,107 @@
             [nemesis.types :as t]
             [nemesis.impl.utils :as u]))
 
-(defn get-reg []
-  (state/get :fns))
+(do :data
 
-(defmacro display-reg []
-  (list 'quote (state/get :fns)))
+    (defn class-extensions
+      "return a list cases objects (one for each class)
+       taking case of potential overlaps.
+       this can be used to emit 'extend-type or 'extend forms"
+      [spec]
+      (letfn [(expand-case [c]
+                (map #(assoc c :class %) (t/classes (:type c))))
+              (conj-case [m {:as _case :keys [class type arity name]}]
+                (assoc m [class arity]
+                       (merge (-> spec :arities (get arity))
+                              {:arity arity
+                               :class class
+                               :type type
+                               :impl-name name})))]
+        (->> (reverse (:cases spec))
+             (mapcat expand-case)
+             (reduce conj-case {})
+             (vals))))
 
-(defn get-spec [name]
-  #_(println "resolve spec name " name (resolve name))
-  (state/get-in [:fns (state/qualify-symbol name)]))
+    (defn extend-spec
+      ""
+      [original-spec extension-spec
+       & {:keys [allow-default-overides]}]
 
-(defn get-spec! [name]
-  #_(p/pprob @state)
-  (or (get-spec name)
-      (u/error "Cannot find spec " (pr-str name) "\nin\n" (u/pretty-str (keys (get-reg))))))
+      (assert (every? (-> original-spec :arities keys set)
+                      (-> extension-spec :arities keys))
+              "unknown arity extension.")
 
-(defn reset-registry! []
-  (println "reset-reg")
-  (swap! state/state assoc-in [:clj :fns] {})
-  (swap! state/state assoc-in [:cljs :fns] {}))
+      (assert (or allow-default-overides
+                  (not (some :default (vals (:arities extension-spec)))))
+              "default case can only be defined on generic creation (nemesis.core/defg)")
 
-(defn register-spec! [spec]
-  (state/swap! assoc-in [:fns (:fullname spec)] spec))
+      (update original-spec :cases (partial concat (:cases extension-spec))))
 
-#_(defn conj-case
-  [cases case]
+    (defn clone-spec
+      ""
+      [{:as original-spec :keys [arities cases]}
+       new-name]
+      (let [{:as names :keys [protocol-prefix method-prefix]} (u/name_derive new-name)
+            arities (into {} (map (fn [[arity spec]]
+                                    [arity (merge spec {:protocol-name (u/name_arify protocol-prefix arity)
+                                                        :method-name (u/name_arify method-prefix arity)})])
+                                  arities))
+            cases (map (fn [c] (assoc c :cloned true)) cases)]
+        (merge original-spec
+               names
+               {:arities arities :cases cases :cloned-from (:fullname original-spec)}))))
 
-  (let [ ;; any? #(= :any (:type %))
-        same-arity? #(= (:arity case) (:arity %))
-        parent? #(t/parentof (:type case) (:type %))
-        overiden-case? #(and (same-arity? %) (parent? %) #_(p/prob :overiden %))
-        remv (comp vec remove)]
 
-    (conj (remv overiden-case? cases) case)
 
-    #_(if (:default case)
-      (if (or (and (any? case) (some any? cases))
-              (some overiden-case? cases))
-        cases
-        (conj cases case))
-      ;; overides
-      (if (any? case)
-        (conj (remv any? cases) case)
-        (conj (remv overiden-case? cases) case)))))
+(do :state
 
-(defn conj-case
-  [cases {:as case :keys [type arity]}]
+    (defn get-reg []
+      (state/get :fns))
 
-  (letfn [(overiden-case? [c]
-            (and (= arity (:arity c))
-                 (t/parentof type (:type c))))]
-    (-> (remove overiden-case? cases)
-        (vec)
-        (conj case))))
+    (defmacro display-reg []
+      (list 'quote (state/get :fns)))
 
-(defn extension-cases
-  [spec]
-  (letfn [(expand-case [c]
-            (map #(assoc c :class %) (t/classes (:type c))))
-          (conj-case [m {:as case :keys [class type arity name]}]
-            #_(assert (not (contains? m [class arity]))
-                    (str "several cases for the same class and arity, spec is corrupted\n"
-                          case))
-            (assoc m [class arity]
-                     (merge (-> spec :arities (get arity))
-                            {:arity arity
-                             :type type
-                             :impl-name name})))]
-    (->> (:cases spec)
-         (mapcat expand-case)
-         (reduce conj-case {})
-         (map (fn [[[class arity] case]]
-                (assoc case :class class :arity arity))))))
+    (defn get-spec [name]
+      #_(println "resolve spec name " name (resolve name))
+      (state/get-in [:fns (state/qualify-symbol name)]))
 
-(defn extend-spec
-  [spec extension-spec]
+    (defn get-spec! [name]
+      #_(p/pprob @state)
+      (or (get-spec name)
+          (u/error "Cannot find spec " (pr-str name) "\nin\n" (u/pretty-str (keys (get-reg))))))
 
-  (assert (every? (-> spec :arities keys set)
-                  (-> extension-spec :arities keys))
-          "unknown arity")
+    (defn reset-registry! []
+      (println "reset-reg")
+      (swap! state/state assoc-in [:clj :fns] {})
+      (swap! state/state assoc-in [:cljs :fns] {}))
 
-  (update spec :cases
-          (fn [cs] (reduce conj-case cs (:cases extension-spec)))))
+    (defn register-spec! [spec]
+      (state/swap! assoc-in [:fns (:fullname spec)] spec)
+      spec)
+
+    (defn extend-spec! [extension-spec]
+      (register-spec!
+       (extend-spec (get-spec! (:fullname extension-spec))
+                    extension-spec)))
+
+    (defn clone-spec! [original-name new-name]
+      (register-spec!
+       (clone-spec (get-spec! original-name)
+                   new-name))))
+
+
+
+
+
+
+
+
+
+
+(comment :scratch
+
+         (require '[nemesis.impl.parse :as p])
+         (extend-spec (clone-spec (get-spec 'nemesis.tries.one/g1)
+                                  'yo)
+                      (p/parse '(yo [x] :set "I'm set" "overiden default"))
+                      :allow-default-overides true))

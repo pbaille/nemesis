@@ -7,13 +7,15 @@
             [clojure.set :as set]))
 
 (defn prototype_registering
-  [{:as _spec :keys [fullname]}
-   {:as _case :keys [compiled arity type]}]
+  [{:as _spec :keys [fullname cloned-from]}
+   {:as _case :keys [cloned compiled arity type]}]
   (let [form (fn [type]
                `(swap! nemesis.core/prototypes
                        assoc-in
                        [~type '~fullname ~arity]
-                       (fn ~compiled)))]
+                       ~(if cloned
+                          `(get-in @nemesis.core/prototypes [~type '~cloned-from ~arity])
+                          `(fn ~compiled))))]
     (if (set? type)
       `(do ~@(mapv form type))
       (form type))))
@@ -22,7 +24,6 @@
   (->> (:cases spec)
        (mapv (partial prototype_registering spec))
        (list* 'do)))
-
 
 (do :cljs-extend
 
@@ -76,12 +77,6 @@
                   (u/with-ns ns protocol-name)
                   {(keyword method-name) impl})))))
 
-(defn extend-forms
-  [spec]
-  (mapv (partial extension-form spec)
-        (reg/extension-cases spec)))
-
-
 (defn protocol-declaration
   [{:keys [arities ns]}]
   `(do ~@(mapv (fn [[_ {:keys [protocol-name method-name argv]}]]
@@ -89,11 +84,10 @@
                     ~(list method-name argv)))
                arities)))
 
-
 (defn protocol-extension
   [spec]
-  `(do ~@(extend-forms spec)))
-
+  `(do ~@(mapv (partial extension-form spec)
+               (reg/class-extensions spec))))
 
 (defn function-definition
   [{:keys [name arities]}]
@@ -106,27 +100,18 @@
                 `(~method-name ~@argv)))
              (vals arities))))
 
-
 (defn extension [spec]
-  #_(pp "extform" (get-spec! (:name spec)))
-  (let [original-spec (reg/get-spec! (:fullname spec))
-        extended-spec (reg/extend-spec original-spec spec)
-        ;; some cases were potentially eliminated by reg/conj-case, we are removing them
-        partial-spec (update spec :cases (partial filter (set (:cases extended-spec))))]
-    (reg/register-spec! extended-spec)
-    `(do ;; ~(dispatches-declarations partial-spec)
-       ~(prototypes_registering partial-spec)
-       ~(protocol-extension partial-spec))))
+  `(do
+     ~(prototypes_registering spec)
+     ~(protocol-extension spec)))
 
 (defn cleaning [{:keys [ns name arities]}]
   `(do
      ~@(mapv (fn [x#] `(ns-unmap '~(symbol ns) '~x#))
              (cons name (mapcat (juxt :method-name :protocol-name) (vals arities))))))
 
-
 (defn declaration [spec]
   #_(println p/*cljs*)
-  (reg/register-spec! spec)
   `(do ~(cleaning spec)
        ~(protocol-declaration spec)
        ~(function-definition spec)
@@ -215,6 +200,12 @@
       `(reify
          ~@(mapcat thing_cases->decls
                    (map thing_parse-impl-cases impls)))))
+
+(do :fork
+    (defn fork [new-name original-name]
+
+      `(swap! nemesis.core/prototypes
+              assoc ~new-name (get @nemesis.core/prototypes ~original-name))))
 
 (do :type-extension
 

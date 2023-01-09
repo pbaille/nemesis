@@ -76,7 +76,7 @@
       (->> (group-by :arity arities)
            (map (fn [[arity xs]]
 
-                  (assert (> (count (filter :default xs)) 1)
+                  (assert (<= (count (filter :default xs)) 1)
                           (str "more than one default case for arity " arity))
                   (assert (apply = (map :variadic xs))
                           (str `arity-map ": inconsistent arity " arity "\n" xs))
@@ -117,7 +117,7 @@
     (defn parse
       ([form] (parse form {}))
       ([[name & body]
-        {:as options :keys [extension-ns lambda-case-compiler ad-hoc]}]
+        & {:as options :keys [extension-ns lambda-case-compiler]}]
        (let [doc (when (string? (first body)) (first body))
              body (if doc (rest body) body)
              names (u/name_derive name)
@@ -126,17 +126,13 @@
              arity-map (arity-map names arities)
              variadic (boolean (some :variadic arities))]
 
-         (if ad-hoc
-           (assert (not (some :default (vals arity-map)))
-                   "default case can only be defined on generic creation (nemesis.core/defg)"))
-
          (compile-cases
-           (merge names
-                  {:doc doc
-                   :cases cases
-                   :variadic variadic
-                   :arities arity-map})
-           options))))
+          (merge names
+                 {:doc doc
+                  :cases cases
+                  :variadic variadic
+                  :arities arity-map})
+          options))))
 
     )
 (comment :scratch
@@ -144,6 +140,7 @@
          (arities '([x] :vec :yovec :yo))
 
          (parse '(yo "doc" [x] :vec :yovec :yo))
+
          (parse '(g1 [x]
                      ;; prim type impl
                      :vec "I am vec"
