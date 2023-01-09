@@ -3,7 +3,8 @@
  :deps {org.clojure/clojure {:mvn/version "1.11.0-alpha4"}
         org.clojure/clojurescript {:mvn/version "1.11.60"}}
 
- :aliases {:release
+ :aliases {:dev {:extra-deps {djblue/portal {:mvn/version "0.35.1"}}}
+           :release
            {:extra-deps {applied-science/deps-library {:mvn/version "0.4.0"}}
             :main-opts ["-m" "applied-science.deps-library"]}
            :cljs
