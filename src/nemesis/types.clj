@@ -198,12 +198,12 @@
 
              (symbol? t) [t]
 
+             (= :nil t) [nil]
+
              (= :default t) (if (state/cljs?) '(default) '(java.lang.Object nil))
 
              (set? t)
              (mapcat #(classes reg %) t)
-
-             (= :nil t) [nil]
 
              :else
              (when-let [cs (reg t)]

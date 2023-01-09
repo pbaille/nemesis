@@ -14,6 +14,8 @@
 
 (def state (atom state0))
 
+(comment (deref state))
+
 ;; a way to compile lambda case diferently if needed
 ;; used in 'with-compiled-cases if no overides given
 ;; you probably should not worry about that

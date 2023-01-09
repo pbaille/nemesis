@@ -33,6 +33,14 @@
     (= "Who am I ?"
        (g1 1))))
 
+(defg nil-not-overiden-by-default [x]
+  :nil :ok
+  [:pouet x])
+
+(assert
+  (and (= [:pouet true] (nil-not-overiden-by-default true))
+       (= :ok (nil-not-overiden-by-default nil))))
+
 ;; extension
 (generic+ g1 [x]
           ;; str impl
@@ -195,3 +203,6 @@
 (pouet {:a 1 :b 2})
 (pouet #{:a 1 :b 2})
 (pouet 42)
+
+(r/clone-spec! `g1
+               'g1-clone)
