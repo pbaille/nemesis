@@ -5,7 +5,7 @@
 (do :parse
 
 
-    (defn no-implementation-error-form [name argv]
+    #_(defn no-implementation-error-form [name argv]
       (let [syms (disj (set (u/findeep argv symbol?)) '&)
             quot (partial list 'quote)]
         (u/error-form "missing implementation for generic: " (quot name)
@@ -23,7 +23,7 @@
         xs))
 
 
-    (defn arity-default-expr
+    #_(defn arity-default-expr
       [name argv couples]
       (if (odd? (count couples))
         (last couples)
@@ -31,11 +31,12 @@
 
     (defn parse-arity-body [body]
       (letfn [(pairs [xs]
-                (reverse (partition 2 xs)))]
+                (vec (partition 2 xs)))]
         (if (even? (count body))
           {:cases (pairs body)}
-          {:default (last body)
-           :cases (pairs (butlast body))})))
+          {:default true
+           :cases (conj (pairs (butlast body))
+                        [:default (last body)])})))
 
 
     (defn arity
@@ -48,36 +49,47 @@
           :argv argv
           :variadic variadic})))
 
+    (defn arity-names
+      [arity {:as _names :keys [protocol-prefix method-prefix]}]
+      {:protocol-name (u/name_arify protocol-prefix arity)
+       :method-name (u/name_arify method-prefix arity)})
+
+
+    (defn arities [body]
+      (map arity
+           (normalize-body body)))
+
 
     (defn arities->cases
       [parsed-arities]
-      (mapcat (fn [{:as a :keys [cases default]}]
+      (mapcat (fn [{:as a :keys [cases]}]
                 (let [case0 (dissoc a :cases :default)]
                   (reduce
                          (fn [cases [t e]]
                            (conj cases (assoc case0 :type t :expr e)))
-                         [] (if default (cons [:default default] cases) cases))))
+                         [] cases)))
               parsed-arities))
 
 
     (defn arity-map
-      [{:as _names :keys [protocol-prefix method-prefix]}
-       arities]
+      [names arities]
       (->> (group-by :arity arities)
            (map (fn [[arity xs]]
+
+                  (assert (> (count (filter :default xs)) 1)
+                          (str "more than one default case for arity " arity))
                   (assert (apply = (map :variadic xs))
                           (str `arity-map ": inconsistent arity " arity "\n" xs))
+
                   (let [argv-litt (u/argv_litt arity)]
-                    [arity (merge {:protocol-name (u/name_arify protocol-prefix arity)
-                                   :method-name (u/name_arify method-prefix arity)
-                                   :argv argv-litt
-                                   :variadic (:variadic (first xs))}
-                                  (if-some [{:keys [default argv]} (first (filter :default xs))]
-                                    {:default {:expr default :argv argv}}))])))
+                    [arity (merge (arity-names arity names)
+                                  {:argv argv-litt
+                                   :variadic (:variadic (first xs))
+                                   :default (some :default xs)})])))
            (into {})))
 
 
-    (defn cases-summary [cases]
+    #_(defn cases-summary [cases]
       (assert (if-let [varities (seq (map :arity (filter :variadic cases)))]
                 (apply = varities)
                 true)
@@ -86,10 +98,6 @@
              (when (boolean (some :variadic cases))
                {:variadic true})))
 
-
-    (defn arities [body]
-      (map arity
-           (normalize-body body)))
 
     (defn compile-cases
 
@@ -120,8 +128,7 @@
 
          (if ad-hoc
            (assert (not (some :default (vals arity-map)))
-                   (str "default case can only be defined on generic creation (nemesis.core/defg)"
-                        arity-map)))
+                   "default case can only be defined on generic creation (nemesis.core/defg)"))
 
          (compile-cases
            (merge names
@@ -138,14 +145,14 @@
 
          (parse '(yo "doc" [x] :vec :yovec :yo))
          (parse '(g1 [x]
-   ;; prim type impl
-   :vec "I am vec"
-   ;; this type is a group
-   ;; under the hood it implements for all collections
-   :coll ["I am coll" x]
-   ;; group litteral can be handy
-   #{:key :sym} "I am key-or-sym"
+                     ;; prim type impl
+                     :vec "I am vec"
+                     ;; this type is a group
+                     ;; under the hood it implements for all collections
+                     :coll ["I am coll" x]
+                     ;; group litteral can be handy
+                     #{:key :sym} "I am key-or-sym"
 
-   "Who am I ?"))
+                     "Who am I ?"))
          (parse '(yo "doc" [x] :vec :yovec))
          (parse '(yo [x] :yo)))
