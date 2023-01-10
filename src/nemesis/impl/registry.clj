@@ -51,7 +51,15 @@
             cases (map (fn [c] (assoc c :cloned true)) cases)]
         (merge original-spec
                names
-               {:arities arities :cases cases :cloned-from (:fullname original-spec)}))))
+               {:arities arities :cases cases :cloned-from (:fullname original-spec)})))
+
+    (defn implementers
+      "given a generic spec,
+       returns a vector of all types that implement the corresponding generic"
+      [spec]
+      (->> (:cases spec)
+           (mapcat (fn [{t :type}] (if (set? t) t [t])))
+           (into #{}))))
 
 
 
@@ -89,7 +97,19 @@
     (defn clone-spec! [original-name new-name]
       (register-spec!
        (clone-spec (get-spec! original-name)
-                   new-name))))
+                   new-name)))
+
+    (defn implementers-map []
+      (u/$vals (get-reg) implementers))
+
+    (defn get-class-cases
+      "get all generics implementations for the given class"
+      [class]
+      (map (fn [spec]
+             {:spec spec
+              :cases (filter (fn [case] (= class (:class case)))
+                             (class-extensions spec))})
+           (vals (get-reg)))))
 
 
 

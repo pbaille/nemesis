@@ -1,7 +1,7 @@
 (ns nemesis.tries.one
   (:require [nemesis.core
              :as g
-             :refer [deft defg generic+ type+ thing]
+             :refer [defg generic+ type+ thing fork fork+ defrec]
              :include-macros true]
             #?(:clj [nemesis.impl.registry :as r])))
 
@@ -167,42 +167,53 @@
     (= :validkey (valid :a))
     (= :validword (valid 'a))))
 
-(deft bub [x y])
+(comment (deft bub [x y])
 
-(type+ :num
-       (->bub [x] (bub x x)))
+         (type+ :num
+                (->bub [x] (bub x x)))
 
-(defg fmap [x f])
-(defg greet [x])
+         (defg fmap [x f])
+         (defg greet [x])
 
-(deft bib [x]
-      (->bub [_] (bub x x))
-      (fmap [_ f] (bib (f x))))
+         (deft bib [x]
+           (->bub [_] (bub x x))
+           (fmap [_ f] (bib (f x))))
 
-(assert
-  (and
-    (= (bub 1 1)
-       (->bub 1))
-    (= (fmap (bib 1) inc)
-       (bib 2))
-    (= (->bub (bib 1))
-       (bub 1 1))))
+         (assert
+          (and
+           (= (bub 1 1)
+              (->bub 1))
+           (= (fmap (bib 1) inc)
+              (bib 2))
+           (= (->bub (bib 1))
+              (bub 1 1))))
 
 
-(defg pouet [x]
-      :map [:map x]
-      :hash [:hash x]
-      [:default x]
-      )
+         (defg pouet [x]
+           :map [:map x]
+           :hash [:hash x]
+           [:default x]
+           )
 
-(require '[nemesis.impl.registry :as r]
-         '[nemesis.impl.utils :as u])
+         (comment
+           (require '[nemesis.impl.registry :as r]
+                    '[nemesis.impl.utils :as u])
 
-(u/pp (r/get-spec 'pouet))
+           (u/pp (r/get-spec 'pouet))
 
-(pouet {:a 1 :b 2})
-(pouet #{:a 1 :b 2})
-(pouet 42)
+           (pouet {:a 1 :b 2})
+           (pouet #{:a 1 :b 2})
+           (pouet 42)
 
-(r/clone-spec! `g1
-               'g1-clone)
+           (r/clone-spec! `g1
+                          'g1-clone)
+
+
+           (do @g/prototypes)
+           ))
+
+(defrec point [x y]
+           :belongs-to [:map]
+           (g1 [x] "i'm a point"))
+
+(g2 (->Point 1 2) :pouet)

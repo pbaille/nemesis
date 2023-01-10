@@ -6,132 +6,130 @@
             [clojure.core :as c]
             [clojure.set :as set]))
 
-(defn prototype_registering
-  [{:as _spec :keys [fullname cloned-from]}
-   {:as _case :keys [cloned compiled arity type]}]
-  (let [form (fn [type]
-               `(swap! nemesis.core/prototypes
-                       assoc-in
-                       [~type '~fullname ~arity]
-                       ~(if cloned
-                          `(get-in @nemesis.core/prototypes [~type '~cloned-from ~arity])
-                          `(fn ~compiled))))]
-    (if (set? type)
-      `(do ~@(mapv form type))
-      (form type))))
+(do :extension
 
-(defn prototypes_registering [spec]
-  (->> (:cases spec)
-       (mapv (partial prototype_registering spec))
-       (list* 'do)))
+    (defn prototype_registering
+      [{:as _spec :keys [fullname cloned-from]}
+       {:as _case :keys [cloned compiled arity type]}]
+      (let [form (fn [type]
+                   `(swap! nemesis.core/prototypes
+                           assoc-in
+                           [~type '~fullname ~arity]
+                           ~(if cloned
+                              `(get-in @nemesis.core/prototypes [~type '~cloned-from ~arity])
+                              `(fn ~compiled))))]
+        (if (set? type)
+          `(do ~@(mapv form type))
+          (form type))))
 
-(do :cljs-extend
+    (defn prototypes_registering [spec]
+      (->> (:cases spec)
+           (mapv (partial prototype_registering spec))
+           (list* 'do)))
 
-    (let [cljs-base-type
-          {nil       "null"
-           'object   "object"
-           'string   "string"
-           'number   "number"
-           'array    "array"
-           'function "function"
-           'boolean  "boolean"
-           'default  "_"}
+    (do :cljs-extend
 
-          protocol-prefix
-          (fn [psym]
-            (str (-> (str psym)
-                     (.replace \. \$)
-                     (.replace \/ \$))
-                 "$"))
+        (let [cljs-base-type
+              {nil       "null"
+               'object   "object"
+               'string   "string"
+               'number   "number"
+               'array    "array"
+               'function "function"
+               'boolean  "boolean"
+               'default  "_"}
 
-          cljs-extend_properties
-          (fn [protocol-name method-name arity]
-            (let [psym (symbol protocol-name)
-                  ns (.replace (namespace psym) \- \_)
-                  name (name psym)
-                  prefix (protocol-prefix (symbol ns name))]
-              {:sentinel prefix
-               :method   (str prefix (munge method-name) "$arity$" arity)}))]
+              protocol-prefix
+              (fn [psym]
+                (str (-> (str psym)
+                         (.replace \. \$)
+                         (.replace \/ \$))
+                     "$"))
 
-      (defn cljs-extend1 [class protocol method arity impl]
-        (if-let [class-str (cljs-base-type class)]
-          `(do (goog.object/set ~protocol ~class-str true)
-               (goog.object/set ~(u/with-ns (namespace protocol) method) ~class-str ~impl))
-          (let [props (cljs-extend_properties protocol method arity)]
-            `(do ~(u/cljs_prototype-assoc-form class (:sentinel props) 'cljs.core/PROTOCOL_SENTINEL)
-                 ~(u/cljs_prototype-assoc-form class (:method props) impl)))))))
+              cljs-extend_properties
+              (fn [protocol-name method-name arity]
+                (let [psym (symbol protocol-name)
+                      ns (.replace (namespace psym) \- \_)
+                      name (name psym)
+                      prefix (protocol-prefix (symbol ns name))]
+                  {:sentinel prefix
+                   :method   (str prefix (munge method-name) "$arity$" arity)}))]
 
-(defn extension-form
-  [{:as _spec :keys [ns fullname]}
-   {:as _case :keys [class arity type protocol-name method-name]}]
-  (let [type (if (set? type) (first type) type)
-        impl `(get-in @nemesis.core/prototypes [~type '~fullname ~arity])]
+          (defn cljs-extend1 [class protocol method arity impl]
+            (if-let [class-str (cljs-base-type class)]
+              `(do (goog.object/set ~protocol ~class-str true)
+                   (goog.object/set ~(u/with-ns (namespace protocol) method) ~class-str ~impl))
+              (let [props (cljs-extend_properties protocol method arity)]
+                `(do ~(u/cljs_prototype-assoc-form class (:sentinel props) 'cljs.core/PROTOCOL_SENTINEL)
+                     ~(u/cljs_prototype-assoc-form class (:method props) impl)))))))
 
-    (if (state/cljs?)
+    (defn extension-form
+      [{:as _spec :keys [ns fullname]}
+       {:as _case :keys [class arity type protocol-name method-name]}]
+      (let [type (if (set? type) (first type) type)
+            impl `(get-in @nemesis.core/prototypes [~type '~fullname ~arity])]
 
-      (cljs-extend1 class (u/with-ns ns protocol-name)
-                    method-name arity impl)
-      (list 'do
-            (when class (list `c/import (list 'quote class)))
-            (list `c/extend class
-                  (u/with-ns ns protocol-name)
-                  {(keyword method-name) impl})))))
+        (if (state/cljs?)
 
-(defn protocol-declaration
-  [{:keys [arities ns]}]
-  `(do ~@(mapv (fn [[_ {:keys [protocol-name method-name argv]}]]
-                 `(defprotocol ~(u/with-ns ns protocol-name)
-                    ~(list method-name argv)))
-               arities)))
+          (cljs-extend1 class (u/with-ns ns protocol-name)
+                        method-name arity impl)
+          (list 'do
+                (when class (list `c/import (list 'quote class)))
+                (list `c/extend class
+                      (u/with-ns ns protocol-name)
+                      {(keyword method-name) impl})))))
 
-(defn protocol-extension
-  [spec]
-  `(do ~@(mapv (partial extension-form spec)
-               (reg/class-extensions spec))))
+    (defn extend-class [class]
+      `(do ~@(mapcat (fn [{:keys [spec cases]}]
+                       (map (partial extension-form spec)
+                            cases))
+                  (reg/get-class-cases class))))
 
-(defn function-definition
-  [{:keys [name arities]}]
-  `(defn ~name
-     ~@(mapv (fn [{:keys [variadic argv method-name]}]
-               (list
-                (if variadic
-                  (u/argv_variadify argv)
-                  argv)
-                `(~method-name ~@argv)))
-             (vals arities))))
+    (defn protocol-extension
+      [spec]
+      `(do ~@(mapv (partial extension-form spec)
+                   (reg/class-extensions spec))))
 
-(defn extension [spec]
-  `(do
-     ~(prototypes_registering spec)
-     ~(protocol-extension spec)))
+    (defn extension [spec]
+      `(do
+         ~(prototypes_registering spec)
+         ~(protocol-extension spec))))
 
-(defn cleaning [{:keys [ns name arities]}]
-  `(do
-     ~@(mapv (fn [x#] `(ns-unmap '~(symbol ns) '~x#))
-             (cons name (mapcat (juxt :method-name :protocol-name) (vals arities))))))
+(do :declaration
 
-(defn declaration [spec]
-  #_(println p/*cljs*)
-  `(do ~(cleaning spec)
-       ~(protocol-declaration spec)
-       ~(function-definition spec)
-       ~(prototypes_registering spec)
-       ~(protocol-extension spec)
-       ~(:name spec)))
+    (defn protocol-declaration
+      [{:keys [arities ns]}]
+      `(do ~@(mapv (fn [[_ {:keys [protocol-name method-name argv]}]]
+                     `(defprotocol ~(u/with-ns ns protocol-name)
+                        ~(list method-name argv)))
+                   arities)))
+
+    (defn function-definition
+      [{:keys [name arities]}]
+      `(defn ~name
+         ~@(mapv (fn [{:keys [variadic argv method-name]}]
+                   (list
+                    (if variadic
+                      (u/argv_variadify argv)
+                      argv)
+                    `(~method-name ~@argv)))
+                 (vals arities))))
+
+    (defn cleaning [{:keys [ns name arities]}]
+      `(do
+         ~@(mapv (fn [x#] `(ns-unmap '~(symbol ns) '~x#))
+                 (cons name (mapcat (juxt :method-name :protocol-name) (vals arities))))))
+
+    (defn declaration [spec]
+      #_(println p/*cljs*)
+      `(do ~(cleaning spec)
+           ~(protocol-declaration spec)
+           ~(function-definition spec)
+           ~(prototypes_registering spec)
+           ~(protocol-extension spec)
+           ~(:name spec))))
 
 (do :sync
-
-    (defn implementers
-      "given a generic spec,
-       returns a vector of all types that implement the corresponding generic"
-      [spec]
-      (->> (:cases spec)
-           (mapcat (fn [{t :type}] (if (set? t) t [t])))
-           (into #{})))
-
-
-    (defn implementers-map []
-      (u/$vals (reg/get-reg) implementers))
 
     (defn types-syncronisation
       "when type registry has been updated,
@@ -145,26 +143,31 @@
                       #_(println "sync-types-form " (sync? ts) (pr-str name))
                       ;; TODO we could emit only whats needed instead of all impls...
                       (when (sync? ts) (protocol-extension (reg/get-spec! name))))
-                    (implementers-map))))))
+                    (reg/implementers-map))))))
 
 (do :implement
 
+
+    (defn implements-all? [expr specs]
+      (if (symbol? expr)
+        `(and ~@(map (fn [spec]
+                       `(when (or ~@(mapv (fn [protocol-name] `(satisfies? ~(u/with-ns (:ns spec) protocol-name) ~expr))
+                                          (map (comp :protocol-name val) (:arities spec))))
+                          ~expr))
+                     specs))
+        (let [vsym (gensym)]
+          `(let [~vsym ~expr]
+             ~(implements-all? vsym specs)))))
 
     (defn implement_impl-body->cases
       [tag cases]
       (map (fn [[pat bod]] (list pat tag bod))
            (u/fn-cases_normalize cases)))
 
-
-    (defn implement [tag [name & body :as form]]
-
-      #_(println "implementing " tag (state/qualify-symbol name) #_form #_(keys (get-reg)))
-      (if (reg/get-spec name)
-        `(nemesis.core/generic+ ~name ~@(implement_impl-body->cases tag body))
-        ;; TODO do I want to restore that ? it does not works well with refreshing
-        (if-let [p (-> (resolve name) meta :protocol)]
-          `(extend-protocol ~(symbol p)
-             ~@(doall (mapcat (fn [t] [t form]) (t/classes tag))))))))
+    (defn implement [tag [name & body]]
+      `(nemesis.core/generic+
+        ~name
+        ~@(implement_impl-body->cases tag body))))
 
 (do :thing
 
@@ -201,12 +204,6 @@
          ~@(mapcat thing_cases->decls
                    (map thing_parse-impl-cases impls)))))
 
-(do :fork
-    (defn fork [new-name original-name]
-
-      `(swap! nemesis.core/prototypes
-              assoc ~new-name (get @nemesis.core/prototypes ~original-name))))
-
 (do :type-extension
 
     (defn conj-type [reg {:keys [tag childs parents]}]
@@ -223,7 +220,7 @@
           (let [{:keys ~fields} ~this-sym] ~@body))))
     )
 
-(do :inheritance
+(comment :inheritance
 
     (defn prototypes_learn [protos type parents]
       (assoc protos

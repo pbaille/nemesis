@@ -1,6 +1,6 @@
 (ns nemesis.tries.two
   (:require
-    [nemesis.core :as g :refer [deft thing] :include-macros true]
+    [nemesis.core :as g :refer [deft thing fork fork+] :include-macros true]
     [nemesis.tries.one :as one]))
 
 (g/deft trio [a b c]
@@ -25,3 +25,30 @@
     (= 2 (one/fmap t1 inc))
     (= (one/bub :iop :nop) (one/->bub t1))
     (= (trio :a :b :c) (->trio t1))))
+
+(fork g1-clone1
+      one/g1)
+
+(map macroexpand
+     (macroexpand
+      '(fork+ g1-clone
+             one/g1
+             [x]
+             :sym "I sym")))
+
+
+(fork+ g1-clone
+       one/g1
+       [x]
+       :sym "I sym")
+(g1-clone 'ert)
+
+(g/fork one/g1)
+
+(g/generic+ g1 [x]
+  :sym "I sym 2")
+
+(g1 'ert)
+
+
+()

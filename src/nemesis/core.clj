@@ -7,7 +7,9 @@
             [nemesis.impl.utils :as u]
             [clojure.string :as str]))
 
+
 (defonce prototypes (atom {}))
+
 
 (u/defmac defg
   "create a generic function"
@@ -15,6 +17,7 @@
   (let [spec (parse/parse form)]
     (reg/register-spec! spec)
     (forms/declaration spec)))
+
 
 (u/defmac generic+
   "add new cases to an existant generic
@@ -26,114 +29,76 @@
     (forms/extension
      (assoc extended-spec :cases new-cases))))
 
+
 (u/defmac implements?
   "test if something implements one or several generics"
-  ([v name]
-   (let [gspec (reg/get-spec! name)
-         vsym (gensym)]
-     `(let [~vsym ~v]
-        (when (or ~@(mapv (fn [protocol-name] `(satisfies? ~(u/with-ns (:ns gspec) protocol-name) ~vsym))
-                          (map (comp :protocol-name val) (:arities gspec))))
-          ~vsym))))
-  ([v name & names]
-   (let [vsym (gensym)]
-     `(let [~vsym ~v]
-        (and ~@(map (fn [n] `(implements? ~vsym ~n)) (cons name names)))))))
+  [v & names]
+  (let [specs (map reg/get-spec! names)]
+    (forms/implements-all? v specs)))
 
-(u/defmac compile-all!
-  [] `(do ~@(map forms/protocol-extension (vals (reg/get-reg)))))
 
 (u/defmac type+
   "like extend type"
   [tag & impls]
   `(do ~@(mapv #(forms/implement tag %) impls)))
 
+
 (u/defmac thing
   "like reify but for generics"
   [& impls]
   (forms/thing impls))
 
+
 (u/defmac fork
   ([name]
    `(fork nil ~name))
   ([new-name original-name]
-   (let [spec (reg/clone-spec! new-name original-name)]
+   (let [new-name (or new-name (symbol (name original-name)))
+         spec (reg/clone-spec! original-name new-name)]
      (forms/declaration spec))))
+
 
 (u/defmac fork+
   [name original-name & impls]
   `(do (fork ~name ~original-name)
        (generic+ ~name ~@impls)))
 
-(u/defmac tag+
 
-  "add a type tag to the type registry (living in nemesis.state/state)
-   tag: the typetag we are defining/extending (a keyword)
-   childs: a seq of other typetags or classes that belongs to the defined tag
-   parents: a seq of other typetags that the defined tag belongs to
-   & impls: optional generic implementations for the defined tag"
+(u/defmac register-type
+  [tag & {:keys [classes groups impls]}]
+  (assert (every? symbol? classes)
+          "not a class")
+  (assert (every? (state/get :types) groups)
+          "unknown group")
+  (state/swap! update :types
+               (fn [types]
+                 (reduce (fn [types group] (update types group conj tag))
+                         (assoc types tag classes) groups)))
+  `(do ~@(map forms/extend-class classes)
+       (type+ ~tag ~@impls)))
 
-  ([{:keys [tag childs parents impls]}]
-   (let [exists? (state/get-in [:types tag])
-         generic-updates
-         (if exists? (cons tag parents) parents)]
 
-     (state/swap!
-       update :types
-       forms/conj-type
-       {:tag tag
-        :childs childs
-        :parents parents})
+(u/defmac defrec [nam fields & body]
+  (let [[groups impls]
+        (if (= :belongs-to (first body))
+          [(second body) (drop 2 body)]
+          [nil body])
 
-     ;; this is brutal, should only recompute what's nescessary
-     (state/swap! assoc :guards (t/predmap))
-
-     #_(p/pp 'not-synced (sync-types-form (vec generic-updates)))
-
-     `(do
-        ~(forms/types-syncronisation (vec generic-updates))
-        ~(when (seq impls) `(type+ ~tag ~@impls)))))
-
-  ([tag childs]
-   `(tag+ ~tag ~childs []))
-  ([tag childs parents & impls]
-   `(tag+ ~{:tag tag :childs childs :parents parents :impls (vec impls)})))
-
-(u/defmac deft
-
-  "declare a new usertype (a clojure record)
-   tag: the typetag (keyword) corresponding to our freshly created record
-   fields: the fields of our record
-   parents: a seq of other typetags that our type belongs to
-   & impls: optional generic implementations for the defined type"
-
-  ([{:as spec
-     :keys [tag parents impls fields childs class-sym]}]
-
-   (let [ns-str (str *ns*)
-         tag-name (name tag)
+         ns-str (str *ns*)
+         tag-name (name nam)
          class-str (apply str (map str/capitalize (str/split tag-name #"-")))
-         class-sym (or class-sym (symbol class-str))
+         class-sym (symbol class-str)
 
          qualified-class
          (if (state/cljs?)
            (symbol ns-str (name class-sym))
-           (u/sym (str/replace ns-str "-" "_") "." (name class-sym)))
+           (u/sym (str/replace ns-str "-" "_") "." (name class-sym)))]
 
-         spec
-         (-> (assoc spec :tag (keyword ns-str (name tag)))
-             (update :childs (fnil conj []) qualified-class))]
+    `(do (defrecord ~class-sym ~fields)
+         (register-type ~(keyword ns-str tag-name)
+                        {:classes [~qualified-class]
+                         :groups ~groups
+                         :impls ~(mapv (partial forms/deft_impl-bind-fields fields) impls)}))))
 
-     `(do #_~(unmap-deft-form {})
-        (defrecord ~class-sym ~fields)
-        (def ~(symbol tag-name) ~(u/sym '-> class-sym))
-        (defg ~(u/sym '-> tag-name) [~'_])
-        (tag+ ~spec))))
-
-  ([tag fields]
-   `(deft ~tag ~fields []))
-
-  ([tag fields x & xs]
-   (let [[parents impls] (if (vector? x) [x xs] [[] (cons x xs)])]
-     `(deft ~{:tag (keyword tag) :fields fields :parents parents
-              :impls (mapv (partial forms/deft_impl-bind-fields fields) impls)}))))
+(comment
+  (state/get :types))
