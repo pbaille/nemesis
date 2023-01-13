@@ -1,6 +1,5 @@
 (ns nemesis.impl.forms
-  (:require [nemesis.types :as t]
-            [nemesis.impl.utils :as u]
+  (:require [nemesis.impl.utils :as u]
             [nemesis.impl.registry :as reg]
             [nemesis.state :as state]
             [clojure.core :as c]
@@ -57,8 +56,8 @@
 
           (defn cljs-extend1 [class protocol method arity impl]
             (if-let [class-str (cljs-base-type class)]
-              `(do (goog.object/set ~protocol ~class-str true)
-                   (goog.object/set ~(u/with-ns (namespace protocol) method) ~class-str ~impl))
+              `(do (cljs.core/unchecked-set ~protocol ~class-str true)
+                   (cljs.core/unchecked-set ~(u/with-ns (namespace protocol) method) ~class-str ~impl))
               (let [props (cljs-extend_properties protocol method arity)]
                 `(do ~(u/cljs_prototype-assoc-form class (:sentinel props) 'cljs.core/PROTOCOL_SENTINEL)
                      ~(u/cljs_prototype-assoc-form class (:method props) impl)))))))
@@ -80,10 +79,10 @@
                       {(keyword method-name) impl})))))
 
     (defn extend-class [class]
-      `(do ~@(mapcat (fn [{:keys [spec cases]}]
-                       (map (partial extension-form spec)
-                            cases))
-                  (reg/get-class-cases class))))
+      `(do ~@(reduce (fn [ret {:keys [spec cases]}]
+                       (into ret (mapv (partial extension-form spec)
+                                       cases)))
+                     [] (reg/get-class-cases class))))
 
     (defn protocol-extension
       [spec]
@@ -150,7 +149,7 @@
 
     (defn implements-all? [expr specs]
       (if (symbol? expr)
-        `(and ~@(map (fn [spec]
+        `(and ~@(mapv (fn [spec]
                        `(when (or ~@(mapv (fn [protocol-name] `(satisfies? ~(u/with-ns (:ns spec) protocol-name) ~expr))
                                           (map (comp :protocol-name val) (:arities spec))))
                           ~expr))
@@ -161,7 +160,7 @@
 
     (defn implement_impl-body->cases
       [tag cases]
-      (map (fn [[pat bod]] (list pat tag bod))
+      (mapv (fn [[pat bod]] (list pat tag bod))
            (u/fn-cases_normalize cases)))
 
     (defn implement [tag [name & body]]

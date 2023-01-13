@@ -13,85 +13,60 @@
 
 (do :builtins
 
-    (defn- cmap [& xs]
-      (u/$vals (apply hash-map xs)
-               hash-set))
+    (do :base-types
 
-    (do :clj
-
-        (def atoms
-          (cmap
-           :fun 'clojure.lang.Fn
-           :num 'java.lang.Number
-           :str 'java.lang.String
-           :sym 'clojure.lang.Symbol
-           :key 'clojure.lang.Keyword
-           :entry 'clojure.lang.MapEntry))
-
-        (def colls
-          '{:seq #{clojure.lang.ISeq}
+        (def clj-base-types
+          '{:nil #{nil}
+            :function #{clojure.lang.Fn}
+            :number #{java.lang.Number}
+            :string #{java.lang.String}
+            :symbol #{clojure.lang.Symbol}
+            :boolean #{clojure.lang.Boolean}
+            :keyword #{clojure.lang.Keyword}
+            :map-entry #{clojure.lang.MapEntry}
+            :seq #{clojure.lang.ISeq}
             :map #{clojure.lang.PersistentArrayMap
                    clojure.lang.PersistentHashMap}
             :set #{clojure.lang.IPersistentSet}
             :vec #{clojure.lang.IPersistentVector}})
 
-        (def prims
-          (merge (cmap :nil nil)
-                 atoms colls))
-
-        (def groups
-          {:prim (u/kset prims)
-           :atom (u/kset atoms)
-           :coll (u/kset colls)
-           :word #{:key :str :sym}
-           :line #{:vec :seq}
-           :hash #{:map :set}}))
-
-    (do :cljs
-
-        (def cljs-atoms
-          (cmap
-           :fun 'function
-           :num 'number
-           :str 'string
-           :sym 'Symbol
-           :key 'Keyword
-           :entry 'MapEntry))
-
-
-        (def cljs-colls
-          '{:seq #{ArrayNodeSeq ChunkedCons ChunkedSeq
+        (def cljs-base-types
+          '{:nil #{nil}
+            :function #{function}
+            :number #{number}
+            :string #{string}
+            :boolean #{boolean}
+            :symbol #{Symbol}
+            :keyword #{Keyword}
+            :map-entry #{MapEntry}
+            :seq #{ArrayNodeSeq ChunkedCons ChunkedSeq
                    Cons Cycle ES6IteratorSeq EmptyList
-                   IndexedSeq #_#_IntegerRange IntegerRangeChunk Iterate KeySeq LazySeq
+                   IndexedSeq IntegerRange IntegerRangeChunk Iterate KeySeq LazySeq
                    List NodeSeq PersistentArrayMapSeq
                    PersistentQueue PersistentQueueSeq PersistentTreeMapSeq
                    RSeq Range Repeat ValSeq}
             :map #{ObjMap PersistentArrayMap PersistentHashMap PersistentTreeMap}
             :set #{PersistentHashSet PersistentTreeSet}
-            :vec #{BlackNode MapEntry PersistentVector RedNode Subvec}})
+            :vec #{BlackNode MapEntry PersistentVector RedNode Subvec}}))
 
-        (def cljs-prims
-          (merge (cmap :nil nil)
-                 cljs-atoms cljs-colls))
-
-        (def cljs-groups
-          {:prim (u/kset cljs-prims)
-           :atom (u/kset cljs-atoms)
-           :coll (u/kset cljs-colls)
-           :word #{:key :str :sym}
-           :line #{:vec :seq}
-           :hash #{:map :set}}))
+    (def groups
+          {:coll #{:map :set :seq :vec}
+           :word #{:keyword :string :symbol}
+           :indexed #{:vec :seq}
+           :hashed #{:map :set}
+           :builtin (set (keys clj-base-types))})
 
     (def preds-symbols
-      {:fun `fn?
+      {:function `fn?
        :vec `vector?
        :seq `seq?
        :set `set?
-       :map `map? #_`u/holymap?
-       :num `number?
-       :key `keyword?
-       :sym `symbol?
-       :str `string?
+       :map `map?
+       :number `number?
+       :keyword `keyword?
+       :symbol `symbol?
+       :string `string?
+       :boolean `boolean?
        :nil `nil?}))
 
 (do :registry
@@ -100,10 +75,13 @@
     ;; prims key holds a map from type-keyword -> class
     ;; groups key hold a map from type-keyword -> #{type-keyword}
 
-    (swap! state/state
-           #(-> %
-                (assoc-in [:clj :types] (merge prims groups))
-                (assoc-in [:cljs :types] (merge cljs-prims cljs-groups))))
+    (defn init! []
+      (swap! state/state
+             #(-> %
+                  (assoc-in [:clj :types] (merge clj-base-types groups))
+                  (assoc-in [:cljs :types] (merge cljs-base-types groups)))))
+
+    (init!)
 
     (defn get-reg []
       (state/get :types))
@@ -210,7 +188,7 @@
                (->> cs
                     (mapcat #(childs reg %))
                     (concat cs)
-                    (filter symbol? #_class?)))))
+                    (filter symbol?)))))
 
     (defn all-types
       "return a set containing all types of a registry
@@ -219,15 +197,9 @@
       ([reg]
        (into #{} (u/kset reg))))
 
-    (def builtin-types
-      (into #{} (concat (keys prims) (keys groups))))
 
-    (defn split-prims []
-      (let [all (get-reg)
-            prim? (c/fn [[_ xs]] (c/every? #(c/or (c/nil? %) (c/symbol? %)) xs))]
-        {:prims  (into {} (filter prim? all))
-         :groups (into {} (remove prim? all))
-         :all    all}))
+
+
     )
 
 (comment :assertions

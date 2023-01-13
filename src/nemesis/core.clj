@@ -10,6 +10,14 @@
 
 (defonce prototypes (atom {}))
 
+(defn reset-state!
+  {:shadow.build/stage :compile-prepare}
+  [build-stage]
+  (tap> "reset nemesis state")
+  (reset! prototypes {})
+  (state/reset!)
+  (t/init!)
+  build-stage)
 
 (u/defmac defg
   "create a generic function"
@@ -23,6 +31,7 @@
   "add new cases to an existant generic
    all given arities must already be known"
   [& form]
+  (tap> "generic+")
   (let [{:as extension-spec new-cases :cases}
         (parse/parse form :extension-ns (u/ns-sym))
         extended-spec (reg/extend-spec! extension-spec)]
@@ -73,29 +82,39 @@
   (state/swap! update :types
                (fn [types]
                  (reduce (fn [types group] (update types group conj tag))
-                         (assoc types tag classes) groups)))
-  `(do ~@(map forms/extend-class classes)
+                         (assoc types tag (set classes)) groups)))
+
+  `(do ~@(mapv forms/extend-class classes)
        (type+ ~tag ~@impls)))
 
-
-(u/defmac defrec [nam fields & body]
+(u/defmac deft [nam fields & body]
   (let [[groups impls]
         (if (= :belongs-to (first body))
           [(second body) (drop 2 body)]
           [nil body])
 
-         ns-str (str *ns*)
-         tag-name (name nam)
-         class-str (apply str (map str/capitalize (str/split tag-name #"-")))
-         class-sym (symbol class-str)
+        ns-str (str *ns*)
+        tag-name (name nam)
+        qualified-tag (keyword ns-str tag-name)
+        class-str (apply str (map str/capitalize (str/split tag-name #"-")))
+        class-sym (symbol class-str)
 
-         qualified-class
-         (if (state/cljs?)
-           (symbol ns-str (name class-sym))
-           (u/sym (str/replace ns-str "-" "_") "." (name class-sym)))]
+        positional-constructor-sym (symbol (str "->" class-sym))
+        map-constructor-sym (symbol (str "map->" class-sym))
+        cast-fn-sym (symbol (str "->" nam))
+
+        qualified-class
+        (if (state/cljs?)
+          (symbol ns-str (name class-sym))
+          (u/sym (str/replace ns-str "-" "_") "." (name class-sym)))]
+
 
     `(do (defrecord ~class-sym ~fields)
-         (register-type ~(keyword ns-str tag-name)
+         (def ~nam ~positional-constructor-sym)
+         (defg ~cast-fn-sym [x#]
+           ~qualified-tag x#
+           :map (~map-constructor-sym x#))
+         (register-type ~qualified-tag
                         {:classes [~qualified-class]
                          :groups ~groups
                          :impls ~(mapv (partial forms/deft_impl-bind-fields fields) impls)}))))

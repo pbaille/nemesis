@@ -78,7 +78,9 @@
     (defn get-spec! [name]
       #_(p/pprob @state)
       (or (get-spec name)
-          (u/error "Cannot find spec " (pr-str name) "\nin\n" (u/pretty-str (keys (get-reg))))))
+
+          (and (tap> @state/state)
+               (u/error "Cannot find spec " (pr-str (state/qualify-symbol name)) "\nin\n" (keys (get-reg))))))
 
     (defn reset-registry! []
       (println "reset-reg")
@@ -105,15 +107,12 @@
     (defn get-class-cases
       "get all generics implementations for the given class"
       [class]
-      (map (fn [spec]
-             {:spec spec
-              :cases (filter (fn [case] (= class (:class case)))
-                             (class-extensions spec))})
-           (vals (get-reg)))))
-
-
-
-
+      (mapv (fn [spec]
+              {:spec spec
+               :cases (filter (fn [case]
+                                (= class (:class case)))
+                              (class-extensions spec))})
+            (vals (get-reg)))))
 
 
 

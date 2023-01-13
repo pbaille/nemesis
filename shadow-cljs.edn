@@ -2,13 +2,19 @@
 
  :dev-http {8080 "public"}
 
- :dependencies
- []
+ :cache-blockers #{nemesis.core}
 
  :builds
  {:main
   {:target :browser
-   :modules {:main {:init-fn nemesis.core/init}}}}}
+   :compiler-options {;;:optimizations :none
+                      :infer-externs :auto
+                      :pseudo-names true
+                      :pretty-print true}
+
+   :build-hooks [(nemesis.core/reset-state!)]
+   :build-options {:cache-level :off}
+   :modules {:main {:entries [nemesis.tries.two]}}}}}
 
 
 #_{:deps {:aliases [:cljs]}

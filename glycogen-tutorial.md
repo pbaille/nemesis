@@ -1,12 +1,8 @@
-# Glycogen
+# Generics
 
-Auteur: Pierre Baille
-Due date: Jun 15, 2020
-Langue: EN
-Mots clés: Clojure, library, polymorphism
-Status: Relecture
-Thème: Clojure
-Type: Article technique
+A library that aims at ease the handling of protocols in a cross platform way.
+It provides some macros similar to `defprotocol`, `extend-protocol`, `extend-type`, `reify` etc... But without the burden of dealing with host platorm class differences.
+
 
 ## Motivation
 
@@ -98,7 +94,7 @@ Obviously, this is not really what we want...
 
 ## Proposition
 
-What our brain really needs to understand the intent may be something like this
+What the previous code is trying to do would be more apparent using something like this.
 
 ```clojure
 (defg plus [x y] ;; defg stands for 'def generic'
@@ -120,7 +116,7 @@ If we need to extend an existing generic it can be done like this
 
 ```clojure
 (g/generic+ plus [x y]
-            :num (+ x y))
+    :num (+ x y))
 
 (is (plus 1 2) 3)
 ```
@@ -129,7 +125,7 @@ Of course this is a simple case. There is only one arity and no destructuration 
 
 ### Hidding host classes
 
-One of the stepping stone on which this library is built upon is a little wrapper around hosting platform's type hierarchies that acts as a compatibility layer and let us forget about it.
+One of the stepping stone on which this library is built upon is a little wrapper around hosting platform's types hierarchy that acts as a compatibility layer and let us forget about it.
 
 It resides in the `glycogen.types` namespace.
 
@@ -594,22 +590,4 @@ Let's take a look at the macro expansion of `defg`
   plus)
 ```
 
-## Further ideas
 
-Generic function should maybe being able to be anonymous and used as lambdas are. For exemple:
-
-```clojure
-(let [f (fg [x] 
-            :coll [:coll x] 
-            :atom [:atom x]
-            [:any x])]
-  (is (f {:a 1})
-      [:coll {:a 1}])
-  (is (f 1)
-      [:atom 1]))
-```
-
-But it brings several question to the table
-
-- how can we simulate closure behavior? is it even possible?
-- memory management

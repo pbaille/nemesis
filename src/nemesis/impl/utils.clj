@@ -152,6 +152,7 @@
     (defn cljs_prototype-assoc-form [obj meth impl]
       (list 'js* "~{}[\"prototype\"][~{}] = ~{}" obj meth impl)))
 
+
 (do :$
 
     (defn $vals [m f]
@@ -213,3 +214,7 @@
                                (doall-rec
                                  (do ~@body)))))
                    cases))))))
+
+(defn tapret> [& xs]
+  (mapv tap> xs)
+  (last xs))

@@ -6,5 +6,10 @@
            }
  :lint-as {nemesis.impl.utils/defmac clojure.core/defmacro
            nemesis.core/defg clojure.core/defn
-           nemesis.core/generic+ clojure.core/defn}
+           nemesis.core/generic+ clojure.core/defn
+           nemesis.core/fork clojure.core/def
+           nemesis.core/fork+ clojure.core/def
+           nemesis.core/deft clojure.core/defrecord
+           nemesis.types/regfn clojure.core/defn
+           }
  :hooks {:analyze-call {}}}
