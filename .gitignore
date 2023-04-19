@@ -11,3 +11,4 @@ pom.xml
 .shadow-cljs
 public/js
 .clj-kondo/.cache/
+**/.DS_Store

@@ -1,0 +1,11 @@
+#+title: Poly
+
+attempt to refactor nemesis in a more functional way
+
+* Model
+
+** compiler
+*** environment
+**** types
+**** functions
+**** host
