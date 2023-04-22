@@ -14,4 +14,4 @@
 
    :build-hooks [(nemesis.core/reset-state!)]
    :build-options {:cache-level :off}
-   :modules {:main {:entries [nemesis.tries.one]}}}}}
+   :modules {:main {:entries [nemesis.tries.two]}}}}}

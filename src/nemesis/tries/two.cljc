@@ -40,7 +40,7 @@
 (g/fork+ g1-clone
        one/g1
        [x]
-       :sym "I sym")
+       :symbol "I sym")
 
 (assert (= (g1-clone 'ert)
            "I sym")
@@ -52,8 +52,9 @@
            (g1 'ert))
         "fork with same name")
 
+
 (g/generic+ g1 [x]
-            :sym "I sym 2")
+            :symbol "I sym 2")
 
 (assert (= (g1 'ert)
            "I sym 2")
