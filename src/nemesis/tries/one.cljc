@@ -118,7 +118,7 @@
       ;; under the hood it implements for all collections
       :coll ["I am coll" x]
       ;; group litteral can be handy
-      #{:key :sym} "I am key-or-sym"
+      #{:keyword :symbol} "I am key-or-sym"
 
       "Who am I ?")
 
@@ -149,7 +149,7 @@
     ;; extension
     (generic+ g1 [x]
               ;; str impl
-              :str ["str" x])
+              :string ["str" x])
 
 
 
@@ -166,8 +166,8 @@
     (defg g2
       ([x y]
        :vec [:g2vec x y]
-       :num [:g2num x y]
-       #{:sym :key} [:g2-sym-or-key x y]
+       :number [:g2num x y]
+       #{:symbol :keyword} [:g2-sym-or-key x y]
        :coll [:g2coll x y]
        [:g2any x y])
       ([x y z]
@@ -191,7 +191,7 @@
 
     (generic+ g2
               ([a b] :vec [:g2vec2 a b])
-              ([a b c & ds] :str [:variadstr a b c ds]))
+              ([a b c & ds] :string [:variadstr a b c ds]))
 
     ;; extension of an existing generic
 
@@ -205,8 +205,8 @@
     ;; several bindings for the same arity (here 1)
 
     (defg g3
-      ([x] :num [:g3num x] [:g3default x])
-      ([[x & xs]] :line [:g3line x xs]))
+      ([x] :number [:g3num x] [:g3default x])
+      ([[x & xs]] :indexed [:g3line x xs]))
 
 
     (assert
@@ -221,7 +221,7 @@
     ;; type+ is like extendtype
     ;; implement several generics at a time for a given type
 
-    (type+ :fun
+    (type+ :function
            (g1 [x] :g1fun)
            (g2 [x y] (list :g2fun2 x y)))
 
@@ -236,7 +236,7 @@
 
     (fork+ g2clone g2
            [x y]
-           :str [:g2clone-str x y])
+           :string [:g2clone-str x y])
 
     (assert (and (= (g2clone "wer" 1)
                     [:g2clone-str "wer" 1])
@@ -253,10 +253,10 @@
            :vec (conj a b)
            :map (apply assoc a b)
            :set (conj a b)
-           :lst (concat a [b])
-           :str (str a (.toString b))
-           :sym (symbol (sip (name a) (.toString b)))
-           :key (keyword (sip (name a) (.toString b))))
+           :seq (concat a [b])
+           :string (str a (.toString b))
+           :symbol (symbol (sip (name a) (.toString b)))
+           :keyword (keyword (sip (name a) (.toString b))))
           ([a b & xs]
            (apply sip (sip a b) xs)))
 
@@ -284,7 +284,7 @@
           (not (valid {:a 1 :b 2 :c nil}))))
 
         (generic+ valid
-                  [x] :key :validkey)
+                  [x] :keyword :validkey)
 
         (assert
          (and
@@ -296,7 +296,7 @@
 
     (deft bub [x y])
 
-    (type+ :num
+    (type+ :number
            (->bub [x] (bub x x)))
 
     (defg fmap [x f])
