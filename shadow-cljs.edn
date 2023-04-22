@@ -14,19 +14,4 @@
 
    :build-hooks [(nemesis.core/reset-state!)]
    :build-options {:cache-level :off}
-   :modules {:main {:entries [nemesis.tries.two]}}}}}
-
-
-#_{:deps {:aliases [:cljs]}
-
- :nrepl {:port 8777}
-
- :builds {:app {:target :browser
-                :output-dir "public/js/compiled"
-                :asset-path "/js/compiled"
-                :compiler-options {:infer-externs :auto
-                                   :pseudo-names true
-                                   :pretty-print true}
-                :devtools {:http-root "public"
-                           :http-port 8700
-                           :preloads [devtools.preload]}}}}
+   :modules {:main {:entries [nemesis.tries.one]}}}}}
