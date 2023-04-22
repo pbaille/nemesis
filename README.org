@@ -113,7 +113,7 @@ something like this.
 (defg plus [x y] ;; defg stands for 'def generic'
       :map (merge x y)
       :vec (into x y)
-      :lst (concat x y))
+      :seq (concat x y))
 #+end_src
 
 We immediately spot the point here, not bothering with platform specific
@@ -132,7 +132,7 @@ If we need to extend an existing generic it can be done like this
 
 #+begin_src clojure
 (generic+ plus [x y]
-    :num (+ x y))
+    :number (+ x y))
 
 (is (plus 1 2) 3)
 #+end_src
@@ -173,24 +173,24 @@ from clojure you can inspect it like this:
 '{ 
    ;; primitives
      :nil #{nil},
-     :num #{java.lang.Number},
-     :fun #{clojure.lang.Fn},
-     :lst #{clojure.lang.ISeq},
+     :number #{java.lang.Number},
+     :function #{clojure.lang.Fn},
+     :seq #{clojure.lang.ISeq},
      :vec #{clojure.lang.IPersistentVector},
-     :key #{clojure.lang.Keyword},
-     :sym #{clojure.lang.Symbol},
-     :str #{java.lang.String},
-     :link #{clojure.lang.MapEntry},
+     :keyword #{clojure.lang.Keyword},
+     :symbol #{clojure.lang.Symbol},
+     :string #{java.lang.String},
+     :map-entry #{clojure.lang.MapEntry},
      :set #{clojure.lang.IPersistentSet},
      :map #{clojure.lang.PersistentArrayMap clojure.lang.PersistentHashMap},
     
      ;; aggregates
-     :line #{:lst :vec},
-     :word #{:key :sym :str},
-     :hash #{:set :map},
-     :atom #{:num :fun :key :sym :str :link},
-     :coll #{:lst :vec :set :map},
-     :prim #{:num :fun :lst :vec :key :sym :str :link :nil :set :map}}
+     :indexed #{:seq :vec},
+     :word #{:keyword :symbol :string},
+     :hashed #{:set :map},
+     :atom #{:number :function :keyword :symbol :string :map-entry},
+     :coll #{:seq :vec :set :map},
+     :prim #{:number :function :seq :vec :keyword :symbol :string :map-entry :nil :set :map}}
 #+end_src
 
 To see the clojurescript type registry:
@@ -199,25 +199,25 @@ To see the clojurescript type registry:
 (state/targeting-cljs (t/get-reg))
 ;;=>
  '{:nil #{nil}
-   :num #{number},
-   :fun #{function},
-   :key #{Keyword},
-   :sym #{Symbol},
-   :str #{string},
-   :link #{MapEntry},
+   :number #{number},
+   :function #{function},
+   :keyword #{Keyword},
+   :symbol #{Symbol},
+   :string #{string},
+   :map-entry #{MapEntry},
    :set #{PersistentTreeSet PersistentHashSet},
    :map #{ObjMap PersistentHashMap PersistentTreeMap PersistentArrayMap},
    :vec #{MapEntry BlackNode Subvec RedNode PersistentVector},
-   :lst #{IndexedSeq LazySeq PersistentTreeMapSeq NodeSeq PersistentArrayMapSeq ES6IteratorSeq ChunkedSeq 
+   :seq #{IndexedSeq LazySeq PersistentTreeMapSeq NodeSeq PersistentArrayMapSeq ES6IteratorSeq ChunkedSeq
           Cons Iterate RSeq ArrayNodeSeq Cycle ChunkedCons ValSeq Repeat PersistentQueueSeq EmptyList 
           PersistentQueue Range KeySeq List},
    
-  :hash #{:set :map},
-  :coll #{:lst :vec :set :map},
-  :line #{:lst :vec},
-  :word #{:key :sym :str},
-  :atom #{:num :fun :key :sym :str :link},
-  :prim #{:num :fun :lst :vec :key :sym :str :link :nil :set :map}}
+  :hashed #{:set :map},
+  :coll #{:seq :vec :set :map},
+  :indexed #{:seq :vec},
+  :word #{:keyword :symbol :string},
+  :atom #{:number :function :keyword :symbol :string :map-entry},
+  :prim #{:number :fun :seq :vec :keyword :symbol :string :map-entry :nil :set :map}}
 #+end_src
 
 Those type registry are certainly not complete but I think that's enough
@@ -231,7 +231,7 @@ namespace is defining some handy functions and macros to play with types:
 
 (t/childs :coll)
 ;; is getting all children of a type =>
-'[:lst
+'[:seq
  :vec
  :set
  :map
@@ -241,7 +241,7 @@ namespace is defining some handy functions and macros to play with types:
  clojure.lang.PersistentHashMap
  clojure.lang.IPersistentVector]
 
-(t/parents :fun)
+(t/parents :function)
 ;; is getting all parents of a type=>
 '(:atom :prim)
 
@@ -254,21 +254,21 @@ namespace is defining some handy functions and macros to play with types:
   clojure.lang.PersistentHashMap)
 
 ;; set litterals can be used to denotes union types
-(t/childs #{:lst :vec})
+(t/childs #{:seq :vec})
 ;; returns all children for types :lst and :vec =>
 '(clojure.lang.ISeq clojure.lang.IPersistentVector)
 
 (t/childof :vec :coll) ;=> :vec (indicating success)
 
-(t/parentof #{:str :sym} :sym) ;=> #{:sym :str}
+(t/parentof #{:string :symbol} :symbol) ;=> #{:sym :str}
 
-(t/parentof :word #{:str :sym}) ;=> :word
+(t/parentof :word #{:string :symbol}) ;=> :word
 
-(t/parentof :word #{:str :vec}) ;=> false
+(t/parentof :word #{:string :vec}) ;=> false
 
 ;; isa
 
-(t/isa :num 1) ;;=> 1
+(t/isa :number 1) ;;=> 1
 
 (t/isa :coll []) ;;=> []
 
@@ -428,7 +428,7 @@ We can even only overide the variadic arity if needed:
 
 #+begin_src clojure
 (g/generic+ fmap [x f & fs]
-  :lst
+  :seq
   (do (println "smart variadic fmap")
       (fmap x (apply comp (reverse (cons f fs))))))
 
@@ -498,7 +498,7 @@ Here we are extending the type =:num= to our previously defined generics
 (=plus= and =fmap=)
 
 #+begin_src clojure
-(g/type+ :num
+(g/type+ :number
          (fmap [x f] (println "fmaping num") (f x))
          (plus [x y] (+ x y)))
 
