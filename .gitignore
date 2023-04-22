@@ -12,3 +12,4 @@ pom.xml
 public/js
 .clj-kondo/.cache/
 **/.DS_Store
+.DS_Store
