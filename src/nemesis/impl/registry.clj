@@ -6,8 +6,8 @@
 (do :data
 
     (defn class-extensions
-      "return a list cases objects (one for each class)
-       taking case of potential overlaps.
+      "return a list of cases objects (one for each class)
+       taking care of potential overlaps.
        this can be used to emit 'extend-type or 'extend forms"
       [spec]
       (letfn [(expand-case [c]
@@ -44,10 +44,11 @@
       [{:as original-spec :keys [arities cases]}
        new-name]
       (let [{:as names :keys [protocol-prefix method-prefix]} (u/name_derive new-name)
-            arities (into {} (map (fn [[arity spec]]
-                                    [arity (merge spec {:protocol-name (u/name_arify protocol-prefix arity)
-                                                        :method-name (u/name_arify method-prefix arity)})])
-                                  arities))
+            arities (->> arities
+                         (map (fn [[arity spec]]
+                                [arity (merge spec {:protocol-name (u/name_arify protocol-prefix arity)
+                                                    :method-name (u/name_arify method-prefix arity)})]))
+                         (into {}))
             cases (map (fn [c] (assoc c :cloned true)) cases)]
         (merge original-spec
                names

@@ -223,7 +223,7 @@ To see the clojurescript type registry:
 Those type registry are certainly not complete but I think that's enough
 to see the point.
 
-Along with the definitions of those registries, the =glycogen.types=
+Along with the definitions of those registries, the =nemesis.types=
 namespace is defining some handy functions and macros to play with types:
 
 #+begin_src clojure

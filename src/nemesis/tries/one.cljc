@@ -138,13 +138,13 @@
       (= "Who am I ?"
          (g1 1))))
 
-    (defg nil-not-overiden-by-default [x]
+    (defg nil-not-overiden-by-default-case [x]
       :nil :ok
       [:pouet x])
 
     (assert
-     (and (= [:pouet true] (nil-not-overiden-by-default true))
-          (= :ok (nil-not-overiden-by-default nil))))
+     (and (= [:pouet true] (nil-not-overiden-by-default-case true))
+          (= :ok (nil-not-overiden-by-default-case nil))))
 
     ;; extension
     (generic+ g1 [x]
