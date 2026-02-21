@@ -14,7 +14,7 @@
 
 (defn class-extensions
   "return a list cases objects (one for each class)
-   taking case of potential overlaps.
-   this can be used to emit 'extend-type or 'extend forms"
+   taking care of potential overlaps.
+   this can be used to emit `extend-type` or `extend` forms"
   [compiler spec]
   (fn.spec/class-extensions spec (:types compiler)))

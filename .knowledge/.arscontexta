@@ -1,0 +1,5 @@
+vault: nemesis
+type: nested
+root: .knowledge
+created: 2026-02-21
+domain: clojure-library-design
