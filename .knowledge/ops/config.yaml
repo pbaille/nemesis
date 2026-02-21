@@ -1,0 +1,18 @@
+processing:
+  depth: deep
+  chaining: suggested
+  extraction:
+    selectivity: moderate
+pipeline:
+  processing_mode: interactive
+provenance: full
+git: true
+session_capture: true
+granularity: atomic
+navigation: 2-tier
+personality:
+  warmth: warm
+  formality: casual
+  opinionated: true
+self_space: enabled
+domain: clojure-library-design
