@@ -10,17 +10,16 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 3,
-    "tokens": 44752,
+    "toolCalls": 4,
+    "tokens": 77590,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T11:59:54.961Z"
+    "lastActivityAt": "2026-03-12T12:01:14.001Z"
   },
-  "statusMessage": "just arrived",
   "contextUsage": {
-    "tokens": 15418,
+    "tokens": 17084,
     "contextWindow": 200000,
-    "percent": 7.7090000000000005
+    "percent": 8.542
   }
 }

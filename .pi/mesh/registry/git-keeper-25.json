@@ -10,17 +10,17 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 3,
-    "tokens": 16371,
+    "toolCalls": 15,
+    "tokens": 243224,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T12:00:04.919Z"
+    "lastActivityAt": "2026-03-12T12:06:40.818Z",
+    "lastToolCall": "commit: chore: update crew state and mesh registry"
   },
-  "statusMessage": "just arrived",
   "contextUsage": {
-    "tokens": 16795,
+    "tokens": 21014,
     "contextWindow": 200000,
-    "percent": 8.397499999999999
+    "percent": 10.507
   }
 }

@@ -1,13 +1,3 @@
-{"v":1,"ts":"2026-03-12T11:09:20.034Z","agent":"maestro-9","type":"edit","target":".pi/crew/board.md"}
-{"v":1,"ts":"2026-03-12T11:09:50.391Z","agent":"agent-1","type":"edit","target":"README.md"}
-{"v":1,"ts":"2026-03-12T11:09:51.362Z","agent":"agent-1","type":"commit","preview":"fix: update git dep SHA in README"}
-{"v":1,"ts":"2026-03-12T11:11:17.880Z","agent":"maestro-9","type":"message","target":"agent-1","preview":"-> agent-1: \"User says \"let's continue\" — what's next on the agenda?\""}
-{"v":1,"ts":"2026-03-12T11:11:39.247Z","agent":"agent-1","type":"message","target":"maestro-9","preview":"-> maestro-9: \"The push is done (a03961a). I also fixed the README SHA w...\""}
-{"v":1,"ts":"2026-03-12T11:25:53.865Z","agent":"readme-fixer","type":"join"}
-{"v":1,"ts":"2026-03-12T11:26:02.616Z","agent":"readme-fixer","type":"reserve","target":"README.md","preview":"Fixing README SHA placeholder and deps coordinate"}
-{"v":1,"ts":"2026-03-12T11:26:02.617Z","agent":"readme-fixer","type":"reserve","target":"README.md","preview":"Fixing README SHA placeholder and deps coordinate"}
-{"v":1,"ts":"2026-03-12T11:26:14.068Z","agent":"readme-fixer","type":"commit","preview":"chore: rename remote to thetis, use SHA placeholder in README"}
-{"v":1,"ts":"2026-03-12T11:26:14.556Z","agent":"readme-fixer","type":"edit","target":"README.md"}
 {"v":1,"ts":"2026-03-12T11:26:24.001Z","agent":"readme-fixer","type":"release","target":"README.md"}
 {"v":1,"ts":"2026-03-12T11:26:24.001Z","agent":"readme-fixer","type":"release","target":"README.md"}
 {"v":1,"ts":"2026-03-12T11:26:29.004Z","agent":"readme-fixer","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/.pi/crew/results/readme-fixer.md"}
@@ -53,3 +43,23 @@
 {"v":1,"ts":"2026-03-12T12:00:09.716Z","agent":"knowledge-daemon-37","type":"reserve","target":".pi/knowledge/","preview":"Knowledge daemon - maintaining project knowledge base"}
 {"v":1,"ts":"2026-03-12T12:00:22.290Z","agent":"git-keeper-25","type":"commit","preview":"docs: add project knowledge base and crew knowledge"}
 {"v":1,"ts":"2026-03-12T12:00:22.309Z","agent":"git-keeper-25","type":"commit","preview":"docs: add session journals and crew results"}
+{"v":1,"ts":"2026-03-12T12:00:26.028Z","agent":"git-keeper-25","type":"commit","preview":"chore: update crew state and mesh registry"}
+{"v":1,"ts":"2026-03-12T12:00:30.601Z","agent":"git-keeper-25","type":"message","target":"maestro-11","preview":"-> maestro-11: \"committed 3: docs(knowledge): add project knowledge base ...\""}
+{"v":1,"ts":"2026-03-12T12:00:44.670Z","agent":"maestro-11","type":"message","target":"git-keeper-25","preview":"-> git-keeper-25: \"Acknowledged — 3 commits for knowledge base, journals, an...\""}
+{"v":1,"ts":"2026-03-12T12:01:05.453Z","agent":"knowledge-daemon-37","type":"edit","target":".pi/crew/state/knowledge-daemon-37/ACTIVITY.md"}
+{"v":1,"ts":"2026-03-12T12:01:10.104Z","agent":"knowledge-daemon-37","type":"message","target":"agent-1","preview":"-> agent-1: \"Knowledge daemon online. Knowledge base is fresh (7 modul...\""}
+{"v":1,"ts":"2026-03-12T12:04:44.695Z","agent":"worker-test-alias","type":"join"}
+{"v":1,"ts":"2026-03-12T12:04:52.262Z","agent":"worker-test-alias","type":"reserve","target":"deps.edn","preview":"Adding :test alias to deps.edn and updating Development section in README.md"}
+{"v":1,"ts":"2026-03-12T12:04:52.262Z","agent":"worker-test-alias","type":"reserve","target":"README.md","preview":"Adding :test alias to deps.edn and updating Development section in README.md"}
+{"v":1,"ts":"2026-03-12T12:04:52.262Z","agent":"worker-test-alias","type":"reserve","target":"deps.edn","preview":"Adding :test alias to deps.edn and updating Development section in README.md"}
+{"v":1,"ts":"2026-03-12T12:04:52.262Z","agent":"worker-test-alias","type":"reserve","target":"README.md","preview":"Adding :test alias to deps.edn and updating Development section in README.md"}
+{"v":1,"ts":"2026-03-12T12:05:01.118Z","agent":"worker-test-alias","type":"edit","target":"deps.edn"}
+{"v":1,"ts":"2026-03-12T12:05:04.409Z","agent":"worker-test-alias","type":"edit","target":"README.md"}
+{"v":1,"ts":"2026-03-12T12:05:17.259Z","agent":"worker-test-alias","type":"release","target":"deps.edn"}
+{"v":1,"ts":"2026-03-12T12:05:17.259Z","agent":"worker-test-alias","type":"release","target":"README.md"}
+{"v":1,"ts":"2026-03-12T12:05:17.260Z","agent":"worker-test-alias","type":"release","target":"deps.edn"}
+{"v":1,"ts":"2026-03-12T12:05:17.260Z","agent":"worker-test-alias","type":"release","target":"README.md"}
+{"v":1,"ts":"2026-03-12T12:05:26.199Z","agent":"worker-test-alias","type":"message","target":"maestro-11","preview":"-> maestro-11: \"done\""}
+{"v":1,"ts":"2026-03-12T12:05:28.909Z","agent":"worker-test-alias","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/.pi/crew/results/worker-test-alias.md"}
+{"v":1,"ts":"2026-03-12T12:06:30.619Z","agent":"knowledge-daemon-37","type":"edit","target":".pi/knowledge/testing.md"}
+{"v":1,"ts":"2026-03-12T12:06:46.239Z","agent":"git-keeper-25","type":"commit","preview":"feat(test): add :test alias to deps.edn and update README dev instructions"}

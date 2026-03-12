@@ -7,8 +7,8 @@
 
 ## Commands
 ```bash
-# Integration tests (CLJ) — load tries namespaces, assertions run on load
-clj -M -e "(require 'thetis.tries.one 'thetis.tries.two 'thetis.tries.three 'thetis.tries.four 'thetis.tries.five)"
+# Integration tests (CLJ) — via :test alias (loads tries namespaces, assertions run on load)
+clj -M:test
 
 # Unit tests (CLJ) — clojure.test runner
 clj -M -m clojure.test poly.types.core-test poly.functions.spec-test poly.incremental-build-test
@@ -31,4 +31,4 @@ npx shadow-cljs compile main
 
 ## Known Issues
 - **Test namespace mismatch**: Unit tests in `test/poly/` still use old `poly.*` namespace (project was renamed from poly → thetis). Imports reference `poly.types.core`, `poly.functions.spec`, etc. These will break unless there's a source path alias or the old namespaces still exist somewhere.
-- **No test runner alias**: No `:test` alias in deps.edn
+- **`:test` alias added**: `deps.edn` now has a `:test` alias that requires all tries namespaces
