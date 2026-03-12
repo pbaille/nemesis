@@ -82,7 +82,7 @@ Protocols are powerful but painful. Here's what thetis fixes:
 Add to `deps.edn`:
 
 ```clojure
-{:deps {io.github.pbaille/nemesis {:git/sha "a3edab6732b2546a7bf62e45aec0823ee989a1b9"}}}
+{:deps {io.github.pbaille/nemesis {:git/sha "e002abf20f22516d0b26e37ed9907f5101be3f79"}}}
 ```
 
 ```clojure
