@@ -10,16 +10,19 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 18,
-    "tokens": 401092,
-    "filesModified": []
+    "toolCalls": 40,
+    "tokens": 1288219,
+    "filesModified": [
+      ".pi/crew/board.md"
+    ]
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T12:06:11.619Z"
+    "lastActivityAt": "2026-03-12T12:11:05.998Z",
+    "lastToolCall": "write: crew/board.md"
   },
   "contextUsage": {
-    "tokens": 24478,
+    "tokens": 31956,
     "contextWindow": 200000,
-    "percent": 12.239
+    "percent": 15.978
   }
 }

@@ -10,16 +10,17 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 24,
-    "tokens": 374051,
+    "toolCalls": 34,
+    "tokens": 751523,
     "filesModified": [
-      ".pi/crew/state/knowledge-daemon-37/ACTIVITY.md",
-      ".pi/knowledge/testing.md"
+      ".pi/knowledge/testing.md",
+      ".pi/knowledge/changelog.md",
+      ".pi/crew/state/knowledge-daemon-37/ACTIVITY.md"
     ]
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T12:06:30.673Z",
-    "lastToolCall": "edit: knowledge/testing.md"
+    "lastActivityAt": "2026-03-12T12:11:04.241Z",
+    "lastToolCall": "write: knowledge-daemon-37/ACTIVITY.md"
   },
   "reservations": [
     {
@@ -29,8 +30,8 @@
     }
   ],
   "contextUsage": {
-    "tokens": 25237,
+    "tokens": 28164,
     "contextWindow": 200000,
-    "percent": 12.6185
+    "percent": 14.082
   }
 }

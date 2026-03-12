@@ -1,5 +1,12 @@
 # Knowledge Changelog
 
+## 2026-03-12T13:01 — Test alias added (knowledge-daemon-37)
+
+- `deps.edn`: New `:test` alias added (runs all tries namespaces via `clj -M:test`)
+- `README.md`: Development commands updated to use `:test` alias
+- Updated `testing.md`: commands section and removed "no test alias" known issue
+- Agents: worker-test-alias, readme-fixer
+
 ## 2026-03-12 — Initial mapping (project-mapper-5)
 
 **Scope**: Full project mapping — all source files read, test files read, config files read.
