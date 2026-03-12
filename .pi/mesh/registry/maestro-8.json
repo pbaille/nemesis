@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "name": "maestro-8",
+  "agentType": "agent",
+  "pid": 83443,
+  "sessionId": "5f011b68-db6c-4dfb-afdd-00d4f5b7673c",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T06:15:28.341Z",
+  "gitBranch": "poly-migration",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 28,
+    "tokens": 1131340,
+    "filesModified": [
+      ".pi/agents/readme-writer/agent.md",
+      ".pi/maestro/board.md"
+    ]
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T08:20:02.223Z",
+    "lastToolCall": "edit: maestro/board.md"
+  },
+  "contextUsage": {
+    "tokens": 61134,
+    "contextWindow": 200000,
+    "percent": 30.567
+  }
+}

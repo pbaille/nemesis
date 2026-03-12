@@ -6,7 +6,6 @@ package-lock.json
 cljs-runtime
 manifest.json
 .nrepl-port
-pom.xml
 .cpcache
 .shadow-cljs
 public/js

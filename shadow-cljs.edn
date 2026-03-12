@@ -2,7 +2,7 @@
 
  :dev-http {8080 "public"}
 
- :cache-blockers #{nemesis.core}
+ :cache-blockers #{thetis.core}
 
  :builds
  {:main
@@ -12,6 +12,5 @@
                       :pseudo-names true
                       :pretty-print true}
 
-   :build-hooks [(nemesis.core/reset-state!)]
-   :build-options {:cache-level :off}
-   :modules {:main {:entries [nemesis.tries.two]}}}}}
+   :build-hooks [(thetis.core/prepare-state!)]
+   :modules {:main {:entries [thetis.tries.two thetis.tries.three thetis.tries.four thetis.tries.five]}}}}}

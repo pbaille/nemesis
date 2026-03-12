@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "name": "agent-1",
+  "agentType": "agent",
+  "pid": 81579,
+  "sessionId": "81aa872f-0ed7-4efb-a355-563679162467",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T06:15:14.455Z",
+  "gitBranch": "poly-migration",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 6,
+    "tokens": 164624,
+    "filesModified": []
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T06:17:33.610Z"
+  },
+  "contextUsage": {
+    "tokens": 25064,
+    "contextWindow": 200000,
+    "percent": 12.531999999999998
+  }
+}

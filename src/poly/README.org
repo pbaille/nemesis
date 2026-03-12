@@ -1,3 +1,0 @@
-* Poly
-
-WIP refactoring of nemesis

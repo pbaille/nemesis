@@ -4,12 +4,12 @@
            :redefined-var {:level :off}
            #_#_ :clojure-lsp/unused-public-var {:level :off}
            }
- :lint-as {nemesis.impl.utils/defmac clojure.core/defmacro
-           nemesis.core/defg clojure.core/defn
-           nemesis.core/generic+ clojure.core/defn
-           nemesis.core/fork clojure.core/def
-           nemesis.core/fork+ clojure.core/def
-           nemesis.core/deft clojure.core/defrecord
-           nemesis.types/regfn clojure.core/defn
+ :lint-as {thetis.utils.misc/defmac clojure.core/defmacro
+           thetis.core/defg clojure.core/defn
+           thetis.core/generic+ clojure.core/defn
+           thetis.core/fork clojure.core/def
+           thetis.core/fork+ clojure.core/def
+           thetis.core/deft clojure.core/defrecord
+           thetis.core/defguard clojure.core/def
            }
  :hooks {:analyze-call {}}}

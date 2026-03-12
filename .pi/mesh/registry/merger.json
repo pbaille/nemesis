@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "name": "merger",
+  "agentType": "agent",
+  "pid": 25745,
+  "sessionId": "f4ce01c0-d7cc-4d31-b35d-85c2d8cb474e",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-sonnet-4-6",
+  "startedAt": "2026-03-12T08:20:03.587Z",
+  "gitBranch": "poly-migration",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 3,
+    "tokens": 21882,
+    "filesModified": []
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T08:20:12.579Z"
+  },
+  "reservations": [
+    {
+      "pattern": ".git/",
+      "reason": "Performing squash merge of poly-migration into master",
+      "since": "2026-03-12T08:20:12.580Z"
+    },
+    {
+      "pattern": ".pi/",
+      "reason": "Performing squash merge of poly-migration into master",
+      "since": "2026-03-12T08:20:12.581Z"
+    }
+  ],
+  "statusMessage": "just arrived",
+  "contextUsage": {
+    "tokens": 22282,
+    "contextWindow": 200000,
+    "percent": 11.141
+  }
+}
