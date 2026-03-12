@@ -10,16 +10,19 @@
   "gitBranch": "poly-migration",
   "isHuman": true,
   "session": {
-    "toolCalls": 31,
-    "tokens": 934851,
-    "filesModified": []
+    "toolCalls": 45,
+    "tokens": 1658596,
+    "filesModified": [
+      "README.md"
+    ]
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T10:59:45.480Z"
+    "lastActivityAt": "2026-03-12T11:11:42.962Z",
+    "lastToolCall": "commit: fix: update git dep SHA in README"
   },
   "contextUsage": {
-    "tokens": 45353,
+    "tokens": 47236,
     "contextWindow": 200000,
-    "percent": 22.6765
+    "percent": 23.618
   }
 }

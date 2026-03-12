@@ -79,10 +79,10 @@ Protocols are powerful but painful. Here's what thetis fixes:
 
 ## Quick Start
 
-Add to `deps.edn`:
+Add to `deps.edn` (use latest SHA from [master](https://github.com/pbaille/thetis)):
 
 ```clojure
-{:deps {io.github.pbaille/nemesis {:git/sha "e002abf20f22516d0b26e37ed9907f5101be3f79"}}}
+{:deps {io.github.pbaille/thetis {:git/sha "LATEST_SHA"}}}
 ```
 
 ```clojure
@@ -139,7 +139,7 @@ npx shadow-cljs compile main   # CLJS tests
 
 ## Status
 
-**v0.2.0** — Macro layer complete and tested (CLJ + CLJS). All extension modes, predicate guards, and fork semantics are stable. Available as git dependency via `io.github.pbaille/nemesis`.
+**v0.2.0** — Macro layer complete and tested (CLJ + CLJS). All extension modes, predicate guards, and fork semantics are stable. Available as git dependency via `io.github.pbaille/thetis`.
 
 ## License
 

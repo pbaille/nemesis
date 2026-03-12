@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "name": "readme-fixer",
+  "agentType": "agent",
+  "pid": 82720,
+  "sessionId": "3a2640e0-a3f4-4eb7-b344-e06a3f3f908d",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T11:25:53.864Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 6,
+    "tokens": 48365,
+    "filesModified": [
+      "README.md"
+    ]
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T11:26:06.608Z",
+    "lastToolCall": "edit: README.md"
+  },
+  "reservations": [
+    {
+      "pattern": "README.md",
+      "reason": "Fixing README SHA placeholder and deps coordinate",
+      "since": "2026-03-12T11:26:02.616Z"
+    }
+  ],
+  "statusMessage": "just arrived",
+  "contextUsage": {
+    "tokens": 17107,
+    "contextWindow": 200000,
+    "percent": 8.5535
+  }
+}

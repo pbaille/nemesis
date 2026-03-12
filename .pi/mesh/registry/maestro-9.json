@@ -10,20 +10,20 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 17,
-    "tokens": 378617,
+    "toolCalls": 38,
+    "tokens": 1187628,
     "filesModified": [
       ".pi/crew/agents/cleanup-worker/agent.md",
       ".pi/crew/board.md"
     ]
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T11:00:16.506Z",
+    "lastActivityAt": "2026-03-12T11:26:02.804Z",
     "lastToolCall": "write: crew/board.md"
   },
   "contextUsage": {
-    "tokens": 31121,
+    "tokens": 35315,
     "contextWindow": 200000,
-    "percent": 15.5605
+    "percent": 17.657500000000002
   }
 }
