@@ -10,18 +10,17 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 29,
-    "tokens": 539529,
+    "toolCalls": 35,
+    "tokens": 746986,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T12:11:00.827Z",
-    "lastToolCall": "commit: docs(readme): use LATEST placeholder instead of hardcoded SHA"
+    "lastActivityAt": "2026-03-12T12:16:32.299Z",
+    "lastToolCall": "commit: chore: update crew results, knowledge changelog, and mesh state"
   },
   "contextUsage": {
-    "tokens": 24873,
+    "tokens": 26573,
     "contextWindow": 200000,
-    "percent": 12.4365
-  },
-  "statusMessage": "just shipped"
+    "percent": 13.2865
+  }
 }
