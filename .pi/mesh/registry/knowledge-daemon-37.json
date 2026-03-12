@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "name": "knowledge-daemon-37",
+  "agentType": "agent",
+  "pid": 96303,
+  "sessionId": "5982df5b-25d8-4f6e-8e84-605d1dbf6d37",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T11:59:57.701Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 6,
+    "tokens": 34146,
+    "filesModified": []
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T12:00:09.716Z"
+  },
+  "reservations": [
+    {
+      "pattern": ".pi/knowledge/",
+      "reason": "Knowledge daemon - maintaining project knowledge base",
+      "since": "2026-03-12T12:00:09.715Z"
+    }
+  ],
+  "statusMessage": "just arrived",
+  "contextUsage": {
+    "tokens": 17527,
+    "contextWindow": 200000,
+    "percent": 8.7635
+  }
+}

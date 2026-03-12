@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "name": "maestro-11",
+  "agentType": "agent",
+  "pid": 95897,
+  "sessionId": "1a0399b4-4d5f-44e1-ac59-1011876160e8",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T11:59:56.093Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 0,
+    "tokens": 0,
+    "filesModified": []
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T11:59:56.093Z"
+  }
+}
