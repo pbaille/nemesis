@@ -24,7 +24,7 @@
 - ✅ Fork semantics: full structural clone, mode reset to `:override`, isolation verified
 - ✅ Predicate guards: `defguard` macro, two-phase dispatch, extension mode integration
 - ✅ Compile-time prototype mirror: closed as unnecessary — compile-time spec is authoritative
-- ✅ README.md written — full API reference, extension modes, guards, CLJS setup
+- ✅ README.md written — landing page + `doc/API.md` (full reference), extension modes, guards, CLJS setup
 - ✅ Namespace rename: `poly.*` → `thetis.*` (artifact stays `pbaille/nemesis`)
 
 ## Next Priorities

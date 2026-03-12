@@ -10,16 +10,16 @@
   "gitBranch": "poly-migration",
   "isHuman": true,
   "session": {
-    "toolCalls": 6,
-    "tokens": 164624,
+    "toolCalls": 31,
+    "tokens": 934851,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T06:17:33.610Z"
+    "lastActivityAt": "2026-03-12T10:59:45.480Z"
   },
   "contextUsage": {
-    "tokens": 25064,
+    "tokens": 45353,
     "contextWindow": 200000,
-    "percent": 12.531999999999998
+    "percent": 22.6765
   }
 }

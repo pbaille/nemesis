@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "name": "git-keeper-21",
+  "agentType": "agent",
+  "pid": 74008,
+  "sessionId": "c22d6f6a-87eb-47cc-8e46-3cf6a6ce990e",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T10:58:54.299Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 5,
+    "tokens": 97465,
+    "filesModified": []
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T10:59:10.791Z"
+  },
+  "statusMessage": "just arrived",
+  "contextUsage": {
+    "tokens": 24711,
+    "contextWindow": 200000,
+    "percent": 12.3555
+  }
+}

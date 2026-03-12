@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "name": "cleanup-worker",
+  "agentType": "agent",
+  "pid": 75297,
+  "sessionId": "9509513d-ab0e-4eed-83ce-81d3d21df96f",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T11:00:06.591Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 7,
+    "tokens": 70144,
+    "filesModified": []
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T11:00:25.882Z"
+  },
+  "reservations": [
+    {
+      "pattern": ".knowledge/",
+      "reason": "Cleanup: archive vault, remove build infra, update README",
+      "since": "2026-03-12T11:00:21.640Z"
+    },
+    {
+      "pattern": ".pi/cornelius-context.md",
+      "reason": "Cleanup: archive vault, remove build infra, update README",
+      "since": "2026-03-12T11:00:21.641Z"
+    },
+    {
+      "pattern": "README.md",
+      "reason": "Cleanup: archive vault, remove build infra, update README",
+      "since": "2026-03-12T11:00:21.642Z"
+    },
+    {
+      "pattern": "build.clj",
+      "reason": "Cleanup: archive vault, remove build infra, update README",
+      "since": "2026-03-12T11:00:21.642Z"
+    },
+    {
+      "pattern": "deps.edn",
+      "reason": "Cleanup: archive vault, remove build infra, update README",
+      "since": "2026-03-12T11:00:21.642Z"
+    },
+    {
+      "pattern": ".archive/",
+      "reason": "Cleanup: archive vault, remove build infra, update README",
+      "since": "2026-03-12T11:00:21.643Z"
+    }
+  ],
+  "statusMessage": "just arrived",
+  "contextUsage": {
+    "tokens": 25071,
+    "contextWindow": 200000,
+    "percent": 12.535499999999999
+  }
+}

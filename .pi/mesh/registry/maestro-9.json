@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "name": "maestro-9",
+  "agentType": "agent",
+  "pid": 73639,
+  "sessionId": "5c880f87-539a-46a0-a3f3-35c5d6221bb5",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-opus-4-6",
+  "startedAt": "2026-03-12T10:58:53.059Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 17,
+    "tokens": 378617,
+    "filesModified": [
+      ".pi/crew/agents/cleanup-worker/agent.md",
+      ".pi/crew/board.md"
+    ]
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-12T11:00:16.506Z",
+    "lastToolCall": "write: crew/board.md"
+  },
+  "contextUsage": {
+    "tokens": 31121,
+    "contextWindow": 200000,
+    "percent": 15.5605
+  }
+}

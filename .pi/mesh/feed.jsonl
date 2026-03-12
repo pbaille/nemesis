@@ -1,32 +1,3 @@
-{"v":1,"ts":"2026-03-12T06:15:14.456Z","agent":"agent-1","type":"join"}
-{"v":1,"ts":"2026-03-12T06:15:28.342Z","agent":"maestro-8","type":"join"}
-{"v":1,"ts":"2026-03-12T06:15:29.928Z","agent":"knowledge-daemon-33","type":"join"}
-{"v":1,"ts":"2026-03-12T06:15:32.026Z","agent":"git-keeper-20","type":"join"}
-{"v":1,"ts":"2026-03-12T06:16:16.077Z","agent":"knowledge-daemon-33","type":"reserve","target":".knowledge/","preview":"Updating vault to reflect poly→thetis namespace rename"}
-{"v":1,"ts":"2026-03-12T06:16:16.077Z","agent":"knowledge-daemon-33","type":"reserve","target":".knowledge/","preview":"Updating vault to reflect poly→thetis namespace rename"}
-{"v":1,"ts":"2026-03-12T06:16:35.325Z","agent":"knowledge-daemon-33","type":"edit","target":".knowledge/maps/architecture-map.md"}
-{"v":1,"ts":"2026-03-12T06:16:41.890Z","agent":"knowledge-daemon-33","type":"edit","target":".knowledge/notes/poly-replaces-nemesis.md"}
-{"v":1,"ts":"2026-03-12T06:16:49.150Z","agent":"knowledge-daemon-33","type":"edit","target":".knowledge/notes/poly-replaces-nemesis.md"}
-{"v":1,"ts":"2026-03-12T06:17:07.714Z","agent":"knowledge-daemon-33","type":"edit","target":".knowledge/notes/predicate-guards-design.md"}
-{"v":1,"ts":"2026-03-12T06:17:18.912Z","agent":"knowledge-daemon-33","type":"release","target":".knowledge/"}
-{"v":1,"ts":"2026-03-12T06:17:18.912Z","agent":"knowledge-daemon-33","type":"release","target":".knowledge/"}
-{"v":1,"ts":"2026-03-12T06:17:20.920Z","agent":"knowledge-daemon-33","type":"edit","target":".pi/crew-knowledge/instances/knowledge-daemon-33/ACTIVITY.md"}
-{"v":1,"ts":"2026-03-12T06:17:22.560Z","agent":"knowledge-daemon-33","type":"message","target":"agent-1","preview":"-> agent-1: \"Knowledge daemon bootstrapped. Vault at `.knowledge/` ass...\""}
-{"v":1,"ts":"2026-03-12T06:17:29.026Z","agent":"agent-1","type":"message","target":"knowledge-daemon-33","preview":"-> knowledge-daemon-33: \"Acknowledged. Good catch on the namespace rename stalenes...\""}
-{"v":1,"ts":"2026-03-12T07:31:14.069Z","agent":"maestro-8","type":"edit","target":".pi/maestro/board.md"}
-{"v":1,"ts":"2026-03-12T07:31:44.882Z","agent":"maestro-8","type":"edit","target":".pi/agents/readme-writer/agent.md"}
-{"v":1,"ts":"2026-03-12T07:31:56.301Z","agent":"maestro-8","type":"edit","target":".pi/agents/readme-writer/agent.md"}
-{"v":1,"ts":"2026-03-12T07:31:58.313Z","agent":"readme-writer","type":"join"}
-{"v":1,"ts":"2026-03-12T07:32:11.089Z","agent":"maestro-8","type":"edit","target":".pi/maestro/board.md"}
-{"v":1,"ts":"2026-03-12T07:32:14.622Z","agent":"readme-writer","type":"reserve","target":"README.md","preview":"Splitting README into README.md (landing page) + doc/API.md (full reference)"}
-{"v":1,"ts":"2026-03-12T07:32:14.623Z","agent":"readme-writer","type":"reserve","target":"doc/","preview":"Splitting README into README.md (landing page) + doc/API.md (full reference)"}
-{"v":1,"ts":"2026-03-12T07:32:14.623Z","agent":"readme-writer","type":"reserve","target":"README.md","preview":"Splitting README into README.md (landing page) + doc/API.md (full reference)"}
-{"v":1,"ts":"2026-03-12T07:32:14.623Z","agent":"readme-writer","type":"reserve","target":"doc/","preview":"Splitting README into README.md (landing page) + doc/API.md (full reference)"}
-{"v":1,"ts":"2026-03-12T07:33:33.829Z","agent":"readme-writer","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/README.md"}
-{"v":1,"ts":"2026-03-12T07:35:02.373Z","agent":"readme-writer","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/doc/API.md"}
-{"v":1,"ts":"2026-03-12T07:35:30.771Z","agent":"readme-writer","type":"release","target":"README.md"}
-{"v":1,"ts":"2026-03-12T07:35:30.771Z","agent":"readme-writer","type":"release","target":"doc/"}
-{"v":1,"ts":"2026-03-12T07:35:30.771Z","agent":"readme-writer","type":"release","target":"README.md"}
 {"v":1,"ts":"2026-03-12T07:35:30.771Z","agent":"readme-writer","type":"release","target":"doc/"}
 {"v":1,"ts":"2026-03-12T07:35:35.767Z","agent":"readme-writer","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/.pi/crew-results/readme-writer.md"}
 {"v":1,"ts":"2026-03-12T07:35:36.707Z","agent":"readme-writer","type":"message","target":"maestro-8","preview":"-> maestro-8: \"done — Split README into two files:\n\n1. **README.md** (14...\""}
@@ -36,3 +7,59 @@
 {"v":1,"ts":"2026-03-12T08:20:12.581Z","agent":"merger","type":"reserve","target":".pi/","preview":"Performing squash merge of poly-migration into master"}
 {"v":1,"ts":"2026-03-12T08:20:12.581Z","agent":"merger","type":"reserve","target":".git/","preview":"Performing squash merge of poly-migration into master"}
 {"v":1,"ts":"2026-03-12T08:20:12.581Z","agent":"merger","type":"reserve","target":".pi/","preview":"Performing squash merge of poly-migration into master"}
+{"v":1,"ts":"2026-03-12T08:20:40.424Z","agent":"merger","type":"commit","preview":"thetis 0.2.0: complete rewrite with extension modes, predicate guards, and ClojureScript support\n\n- Renamed poly.* → thetis.* namespaces throughout\n- Implemented four extension modes: sealed, extend, refine (default), override\n- Added predicate guards with defguard macro and two-phase dispatch\n- Fork semantics: full structural clone with mode reset\n- Split README into landing page + doc/API.md reference\n- Full ClojureScript support verified under shadow-cljs\n- Package cleanup: build.clj with tools.build, MIT license\n- Comprehensive docstrings on all namespaces and public functions\n- 2,480 lines across 20 source files, 5 test suites passing"}
+{"v":1,"ts":"2026-03-12T08:21:03.419Z","agent":"merger","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/.pi/crew-results/merger.md"}
+{"v":1,"ts":"2026-03-12T08:21:08.578Z","agent":"merger","type":"release","target":".git/"}
+{"v":1,"ts":"2026-03-12T08:21:08.578Z","agent":"merger","type":"release","target":".pi/"}
+{"v":1,"ts":"2026-03-12T08:21:08.578Z","agent":"merger","type":"release","target":".git/"}
+{"v":1,"ts":"2026-03-12T08:21:08.578Z","agent":"merger","type":"release","target":".pi/"}
+{"v":1,"ts":"2026-03-12T08:21:08.580Z","agent":"merger","type":"message","target":"maestro-8","preview":"-> maestro-8: \"done — squash merge complete. Commit `376e45e` on master:...\""}
+{"v":1,"ts":"2026-03-12T08:22:05.478Z","agent":"knowledge-daemon-33","type":"edit","target":".knowledge/self/goals.md"}
+{"v":1,"ts":"2026-03-12T08:23:02.640Z","agent":"knowledge-daemon-33","type":"message","target":"agent-1","preview":"-> agent-1: \"Shutting down gracefully. Vault is current — updated arch...\""}
+{"v":1,"ts":"2026-03-12T08:23:03.257Z","agent":"knowledge-daemon-33","type":"edit","target":".pi/crew-knowledge/instances/knowledge-daemon-33/ACTIVITY.md"}
+{"v":1,"ts":"2026-03-12T08:23:03.262Z","agent":"knowledge-daemon-33","type":"edit","target":".pi/crew-results/knowledge-daemon-33.md"}
+{"v":1,"ts":"2026-03-12T08:23:05.631Z","agent":"maestro-8","type":"edit","target":".pi/maestro/board.md"}
+{"v":1,"ts":"2026-03-12T08:23:10.134Z","agent":"maestro-8","type":"message","target":"agent-1","preview":"-> agent-1: \"Acknowledged, shutting down. State saved to board. Curren...\""}
+{"v":1,"ts":"2026-03-12T08:33:29.886Z","agent":"migrate-thetis","type":"join"}
+{"v":1,"ts":"2026-03-12T08:33:40.302Z","agent":"migrate-thetis","type":"reserve","target":".pi/crew-knowledge/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.303Z","agent":"migrate-thetis","type":"reserve","target":".pi/crew-results/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.303Z","agent":"migrate-thetis","type":"reserve","target":".pi/maestro/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.304Z","agent":"migrate-thetis","type":"reserve","target":".pi/agents/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.304Z","agent":"migrate-thetis","type":"reserve","target":".pi/crew/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.304Z","agent":"migrate-thetis","type":"reserve","target":".pi/crew-knowledge/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.304Z","agent":"migrate-thetis","type":"reserve","target":".pi/crew-results/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.304Z","agent":"migrate-thetis","type":"reserve","target":".pi/maestro/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.304Z","agent":"migrate-thetis","type":"reserve","target":".pi/agents/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:33:40.305Z","agent":"migrate-thetis","type":"reserve","target":".pi/crew/","preview":"Migrating crew state directories to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:34:20.989Z","agent":"migrate-thetis","type":"commit","preview":"chore(.pi): migrate crew state to consolidated .pi/crew/ structure"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/crew-knowledge/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/crew-results/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/maestro/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/agents/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/crew/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/crew-knowledge/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/crew-results/"}
+{"v":1,"ts":"2026-03-12T08:34:22.748Z","agent":"migrate-thetis","type":"release","target":".pi/maestro/"}
+{"v":1,"ts":"2026-03-12T08:34:22.749Z","agent":"migrate-thetis","type":"release","target":".pi/agents/"}
+{"v":1,"ts":"2026-03-12T08:34:22.749Z","agent":"migrate-thetis","type":"release","target":".pi/crew/"}
+{"v":1,"ts":"2026-03-12T08:34:35.527Z","agent":"migrate-thetis","type":"message","target":"agent-1","preview":"-> agent-1: \"done — migration complete. Commit: `1d6044a` (\"chore(.pi)...\""}
+{"v":1,"ts":"2026-03-12T08:34:36.519Z","agent":"migrate-thetis","type":"edit","target":"/Users/pierrebaille/Code/WIP/thetis/.pi/crew/results/migrate-thetis.md"}
+{"v":1,"ts":"2026-03-12T10:58:53.059Z","agent":"maestro-9","type":"join"}
+{"v":1,"ts":"2026-03-12T10:58:54.299Z","agent":"git-keeper-21","type":"join"}
+{"v":1,"ts":"2026-03-12T10:59:38.769Z","agent":"maestro-9","type":"message","target":"agent-1","preview":"-> agent-1: \"Got it. Clear plan, I'll execute it now. Spawning a worke...\""}
+{"v":1,"ts":"2026-03-12T11:00:01.219Z","agent":"maestro-9","type":"edit","target":".pi/crew/agents/cleanup-worker/agent.md"}
+{"v":1,"ts":"2026-03-12T11:00:06.591Z","agent":"cleanup-worker","type":"join"}
+{"v":1,"ts":"2026-03-12T11:00:07.933Z","agent":"maestro-9","type":"edit","target":".pi/crew/agents/cleanup-worker/agent.md"}
+{"v":1,"ts":"2026-03-12T11:00:18.027Z","agent":"maestro-9","type":"edit","target":".pi/crew/board.md"}
+{"v":1,"ts":"2026-03-12T11:00:21.641Z","agent":"cleanup-worker","type":"reserve","target":".knowledge/","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.642Z","agent":"cleanup-worker","type":"reserve","target":".pi/cornelius-context.md","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.642Z","agent":"cleanup-worker","type":"reserve","target":"README.md","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.642Z","agent":"cleanup-worker","type":"reserve","target":"build.clj","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":"deps.edn","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":".archive/","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":".knowledge/","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":".pi/cornelius-context.md","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":"README.md","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":"build.clj","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.643Z","agent":"cleanup-worker","type":"reserve","target":"deps.edn","preview":"Cleanup: archive vault, remove build infra, update README"}
+{"v":1,"ts":"2026-03-12T11:00:21.644Z","agent":"cleanup-worker","type":"reserve","target":".archive/","preview":"Cleanup: archive vault, remove build infra, update README"}

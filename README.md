@@ -82,7 +82,7 @@ Protocols are powerful but painful. Here's what thetis fixes:
 Add to `deps.edn`:
 
 ```clojure
-{:deps {pbaille/thetis {:mvn/version "0.2.0"}}}
+{:deps {io.github.pbaille/nemesis {:git/sha "a3edab6732b2546a7bf62e45aec0823ee989a1b9"}}}
 ```
 
 ```clojure
@@ -135,13 +135,11 @@ Add to `deps.edn`:
 ```bash
 clj -M -e "(require 'thetis.tries.one 'thetis.tries.two 'thetis.tries.three 'thetis.tries.four 'thetis.tries.five)"  # CLJ tests
 npx shadow-cljs compile main   # CLJS tests
-clj -T:build jar               # Build JAR
-clj -T:build install            # Install to local .m2
 ```
 
 ## Status
 
-**v0.2.0** — Macro layer complete and tested (CLJ + CLJS). All extension modes, predicate guards, and fork semantics are stable. Published as `pbaille/thetis`.
+**v0.2.0** — Macro layer complete and tested (CLJ + CLJS). All extension modes, predicate guards, and fork semantics are stable. Available as git dependency via `io.github.pbaille/nemesis`.
 
 ## License
 
