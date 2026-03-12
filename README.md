@@ -133,8 +133,8 @@ Add to `deps.edn` (use latest SHA from [master](https://github.com/pbaille/theti
 ## Development
 
 ```bash
-clj -M -e "(require 'thetis.tries.one 'thetis.tries.two 'thetis.tries.three 'thetis.tries.four 'thetis.tries.five)"  # CLJ tests
-npx shadow-cljs compile main   # CLJS tests
+clj -M:test                      # Run CLJ test suite
+npx shadow-cljs compile main     # Run CLJS tests
 ```
 
 ## Status
