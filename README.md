@@ -82,7 +82,7 @@ Protocols are powerful but painful. Here's what thetis fixes:
 Add to `deps.edn` (use latest SHA from [master](https://github.com/pbaille/thetis)):
 
 ```clojure
-{:deps {io.github.pbaille/thetis {:git/sha "LATEST_SHA"}}}
+{:deps {io.github.pbaille/thetis {:git/sha "LATEST"}}}
 ```
 
 ```clojure
