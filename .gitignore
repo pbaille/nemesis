@@ -11,3 +11,4 @@ manifest.json
 public/js
 .clj-kondo/.cache/
 .DS_Store
+out/
