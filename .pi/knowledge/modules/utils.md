@@ -25,9 +25,8 @@ Largest utility file. Key items:
 - `cljs?` — detects CLJS target by checking `:ns` in expansion env
 - `qualify-symbol` — resolves symbol via `cljs.analyzer/resolve-var` (CLJS) or `resolve` (CLJ)
 
-## Dead Code
-- `pp`, `pretty-str` — debug printing utils, never used (confirmed dead-code-detective)
-- `cljs_prototype-assoc-form` is duplicated as dead local in `compiler/forms.clj` `letfn`
+## Dead Code — REMOVED (worker-dead-code, 2026-03-13)
+Removed: `pp`, `pretty-str` (and `clojure.pprint` import). Dead `cljs_prototype-assoc-form` duplicate in `compiler/forms.clj` letfn also removed.
 
 ## Structure Note
 `utils/misc.clj` is a grab-bag mixing unrelated concerns (JS interop, symbols, fn normalization, macros, debug). Could benefit from splitting into focused modules.

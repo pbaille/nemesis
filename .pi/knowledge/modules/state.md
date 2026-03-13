@@ -18,12 +18,8 @@ Global mutable state for the compile-time registry. Holds both CLJ and CLJS regi
 - `init-types!` — populates both CLJ/CLJS type registries from `types.data` (called at load time)
 - `qualify-symbol` — resolves symbol using expansion env (CLJ `resolve` or `cljs.analyzer/resolve-var`)
 
-## Dead Code (confirmed by dead-code-detective, 2026-03-13)
-- `debug` atom — never read or written
-- `lambda-case-compiler*` atom — remnant from earlier design, zero references
-- `get-in` fn — never called (shadowed by core get-in usage patterns)
-- `display` macro — REPL debug helper, never used
-- `targeting-cljs` macro — never used
+## Dead Code — REMOVED (worker-dead-code, 2026-03-13)
+Removed: `debug` atom, `lambda-case-compiler*` atom, `get-in` fn, `display` macro, `targeting-cljs` macro. `:refer-clojure :exclude` updated (no longer excludes `get-in`).
 
 ## Incremental Build Support
 - `prepared-namespaces` atom: tracks which ns have been cleaned in current build pass

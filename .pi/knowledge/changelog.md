@@ -1,5 +1,12 @@
 # Knowledge Changelog
 
+## 2026-03-13T07:08 — Dead code removal + extension ordering fix (knowledge-daemon-37)
+
+- worker-dead-code removed dead code from state.clj (5 vars), compiler/data.clj (2 defs), compiler/core.clj (3 fns), compiler/forms.clj (1 fn + dead letfn), types.clj (4 vars), types/core.clj (1 fn), utils/misc.clj (2 fns + pprint import)
+- scout-ordering fixed extension-case docstrings (alphabetical, not temporal)
+- Updated modules: state, utils, types, functions, compiler — marked dead code as REMOVED
+- BUG-4 resolved: docs now correctly describe alphabetical ordering
+
 ## 2026-03-13T06:48 — P0 bug fixes applied (knowledge-daemon-37)
 
 - worker-p0-fixes fixed BUG-1 (Boolean class), BUG-2 (isa fallback), BUG-3 (childof/parentof)

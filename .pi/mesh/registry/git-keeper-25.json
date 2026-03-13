@@ -10,18 +10,18 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 51,
-    "tokens": 1275845,
+    "toolCalls": 60,
+    "tokens": 1575519,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-13T06:49:56.919Z",
-    "lastToolCall": "commit: fix: boolean type class, isa macro silent nil, childof/parentof false positives"
+    "lastActivityAt": "2026-03-13T07:09:50.155Z",
+    "lastToolCall": "commit: docs: fix misleading extension ordering comments in spec.clj"
   },
   "contextUsage": {
-    "tokens": 31667,
+    "tokens": 34259,
     "contextWindow": 200000,
-    "percent": 15.8335
+    "percent": 17.1295
   },
   "statusMessage": "just shipped"
 }

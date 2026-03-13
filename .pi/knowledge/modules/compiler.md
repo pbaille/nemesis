@@ -14,9 +14,9 @@ Query + update functions on compiler value `{:functions, :types, :guards, :type-
 - `remove-ns-contributions` — removes all function, type, and guard contributions from a namespace
 - `class-extensions` — resolve type keywords to concrete class-level cases
 
-## compiler/data.clj (20 lines) — Constructors
+## compiler/data.clj (~12 lines) — Constructors
 - `make-compiler` — fresh compiler value
-- `clj-compiler` / `cljs-compiler` — pre-initialized with platform base types
+- ~~`clj-compiler` / `cljs-compiler`~~ — removed (dead code, worker-dead-code)
 
 ## compiler/forms.clj (327 lines) — Code Generation
 The most complex file. Generates actual Clojure/CLJS code from specs.

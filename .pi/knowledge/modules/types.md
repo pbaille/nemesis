@@ -33,10 +33,9 @@ Wraps `types/core.clj` with state lookups. Also provides:
 - **BUG-2 ✅**: `isa` macro now throws `ex-info` for unknown type keywords (was silent nil)
 - **BUG-3 ✅**: `childof`/`parentof` now use `(some #{x} (children reg y))` instead of broken subset check
 
-## Dead Code (confirmed by dead-code-detective)
-- `compile-pred-map`, `predmap`, `builtin-preds` — unused cluster
-- `get-type-state` — unused
-- `cyclic?`, `all-paths`, `all-types`, `childs`, `childof`, `parentof` — unused re-exports
+## Dead Code — PARTIALLY REMOVED (worker-dead-code, 2026-03-13)
+Removed: `compile-pred-map`, `predmap`, `builtin-preds`, `get-type-state`, `make-guard-state` (from core.clj).
+Still present (unused re-exports): `cyclic?`, `all-paths`, `all-types`, `childs`, `childof`, `parentof`.
 
 ## Key Design: Why So Many CLJS Types?
 `:seq` in CLJS maps to ~20 concrete types (LazySeq, Cons, Range, etc.) vs 1 interface in CLJ (ISeq). This is the core problem thetis solves — one keyword, all platforms.
