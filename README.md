@@ -62,7 +62,7 @@ Protocols are powerful but painful. Here's what thetis fixes:
 - **`:coll` covers everything** — Aggregate types (`:coll` → `:vec :map :set :seq`) give you one impl for all collections.
 - **Multi-arity just works** — `defg` with N arities generates N protocols automatically. No naming, no ceremony.
 - **Extension safety** — Four modes (`:sealed`, `:extend`, `:refine`, `:override`) control who can change what. Default is `:refine` — specialize, don't break.
-- **Zero overhead on CLJ** — Compiles to protocol dispatch (JVM interface calls). No runtime reflection.
+- **Zero overhead on CLJ** — Compiles to protocol dispatch (JVM interface calls). No runtime reflection. Predicate guards add a lightweight runtime check when active.
 
 ## Features
 

@@ -19,6 +19,7 @@ Complete reference for the thetis polymorphic generics library.
   - [`fork` / `fork+` — Clone a Generic](#fork--fork----clone-a-generic)
   - [`deft` — Define a Record Type](#deft--define-a-record-type)
   - [`register-type` — Register a Custom Type](#register-type--register-a-custom-type)
+  - [`thetis.types` — Type Registry Queries](#thetistypes--type-registry-queries)
   - [`defguard` — Define a Predicate Guard](#defguard--define-a-predicate-guard)
   - [`implements?` — Test Protocol Satisfaction](#implements--test-protocol-satisfaction)
 - [Extension Modes](#extension-modes)
@@ -27,6 +28,7 @@ Complete reference for the thetis polymorphic generics library.
   - [`:refine` (default)](#refine--specialize-dont-override-default)
   - [`:override`](#override--full-override)
   - [Fork Mode Reset](#fork-mode-reset)
+  - [Extension Ordering](#extension-ordering)
 - [Predicate Guards](#predicate-guards)
 - [ClojureScript](#clojurescript)
   - [Setup with shadow-cljs](#setup-with-shadow-cljs)
@@ -299,6 +301,123 @@ Options:
 - `:groups` — optional parent type groups this type belongs to
 - `:impls` — optional generic implementations to install immediately
 
+### `thetis.types` — Type Registry Queries
+
+The `thetis.types` namespace exposes runtime access to the type registry — inspect the hierarchy, resolve type keywords to host classes, and generate predicates. Useful for tooling, introspection, and building on top of the type system.
+
+```clojure
+(require '[thetis.types :as tt])
+```
+
+#### Registry access
+
+**`get-reg`** — Returns the current type registry map.
+
+```clojure
+(tt/get-reg)
+;=> {:vec #{clojure.lang.IPersistentVector}
+;    :coll #{:seq :vec :set :map}
+;    :builtin #{:vec :map :seq :set :number ...}
+;    ...}
+```
+
+**`get-type`** — Look up a single type keyword in the registry. Returns `nil` if not found.
+
+```clojure
+(tt/get-type :vec)   ;=> #{clojure.lang.IPersistentVector}
+(tt/get-type :coll)  ;=> #{:seq :vec :set :map}
+(tt/get-type :bogus) ;=> nil
+```
+
+**`all-types`** — Returns a set of all registered type keywords (built-in, aggregate, and custom).
+
+```clojure
+(tt/all-types)
+;=> #{:vec :map :seq :set :number :string :keyword :symbol :function :nil
+;     :coll :indexed :hashed :word :builtin ...}
+```
+
+#### Hierarchy queries
+
+**`parents`** — Returns the immediate parent types of a keyword (types for which this keyword is a member).
+
+```clojure
+(tt/parents :vec)  ;=> (:coll :indexed :builtin)
+(tt/parents :coll) ;=> (:builtin)
+```
+
+**`childs`** — Returns the immediate children of a type keyword (keywords that are members of it).
+
+```clojure
+(tt/childs :coll)  ;=> (:seq :vec :set :map)
+(tt/childs :vec)   ;=> ()
+```
+
+**`childof`** — Returns truthy if `x` is a direct or indirect child of `y`.
+
+```clojure
+(tt/childof :vec :coll)    ;=> true
+(tt/childof :vec :builtin) ;=> true
+(tt/childof :coll :vec)    ;=> false
+```
+
+**`parentof`** — Returns truthy if `x` is a direct or indirect parent of `y`.
+
+```clojure
+(tt/parentof :coll :vec)   ;=> true
+(tt/parentof :vec :coll)   ;=> false
+```
+
+**`classes`** — Resolves a type keyword to its concrete host classes, recursively expanding aggregate types.
+
+```clojure
+(tt/classes :vec)
+;=> #{clojure.lang.IPersistentVector}
+
+(tt/classes :coll)
+;=> #{clojure.lang.ISeq clojure.lang.IPersistentVector
+;     clojure.lang.IPersistentSet clojure.lang.IPersistentMap ...}
+```
+
+#### Type predicates
+
+**`isa`** — Macro. Generates a type predicate for a keyword. Expands to efficient `instance?` checks at macro-expansion time — no runtime registry lookup.
+
+```clojure
+;; One-argument form — returns a predicate fn
+(filter (tt/isa :vec) [[] {} () #{}])   ;=> ([] )
+(filter (tt/isa :coll) [[] {} 42 "hi"]) ;=> ([] {})
+
+;; Two-argument form — inline test, returns the value or nil
+(tt/isa :number 42)    ;=> 42    (truthy)
+(tt/isa :number "hi")  ;=> nil
+(tt/isa :coll [1 2])   ;=> [1 2] (truthy)
+```
+
+Works with set literals too, for ad-hoc unions:
+
+```clojure
+((tt/isa #{:keyword :symbol}) :foo)   ;=> :foo
+((tt/isa #{:keyword :symbol}) "str")  ;=> nil
+```
+
+**`symbolic-pred`** — Returns a quoted predicate form for a type keyword. Low-level; used internally by `isa` and the macro compiler. Takes an optional seed expression to produce an inline `let`-bound form.
+
+```clojure
+(tt/symbolic-pred :vec)
+;=> (fn [G__1] (when (instance? clojure.lang.IPersistentVector G__1) G__1))
+```
+
+**`symbolic-pred-body`** — Returns just the condition expression for a type, without the wrapping `fn`. Useful when embedding type checks inside macro-generated code.
+
+```clojure
+(tt/symbolic-pred-body (tt/get-reg) :vec 'x)
+;=> (clojure.core/instance? clojure.lang.IPersistentVector x)
+
+(tt/symbolic-pred-body (tt/get-reg) :coll 'x)
+;=> (clojure.core/or (instance? ...) (instance? ...) ...)
+```
+
 ### `defguard` — Define a Predicate Guard
 
 Define a predicate-refined subtype. See the full [Predicate Guards](#predicate-guards) section below.
@@ -403,6 +522,24 @@ When you `fork` a generic, the fork **always resets to `:override`** — even if
 (fork my-frozen frozen)
 (generic+ my-frozen [x] :string x)  ; ✓ works — fork is :override
 ```
+
+### Extension Ordering
+
+When multiple namespaces extend the same type on an `:override` generic, the **namespace whose name sorts last alphabetically wins**. This ordering is deterministic and rebuild-safe — it ensures consistent behavior across hot reloads and incremental builds.
+
+```clojure
+;; ns: my.app.alpha
+(generic+ debug [x] :vec "alpha impl")
+
+;; ns: my.app.zeta  ← sorts after my.app.alpha
+(generic+ debug [x] :vec "zeta impl")
+
+(debug [1 2 3])  ;=> "zeta impl"  — zeta wins
+```
+
+This matters most in ClojureScript with incremental shadow-cljs builds, where namespaces may be recompiled in varying order. By making last-alphabetical-namespace the winner, the effective implementation is stable regardless of build order.
+
+> **Tip:** If you need a specific namespace to "own" a particular override, name it so it sorts last among the competing namespaces — or use `fork` to take a private copy of the generic instead.
 
 ---
 
