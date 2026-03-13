@@ -14,17 +14,17 @@
 ;;   :extension-cases   — map of {ns-key [cases...]} from generic+ calls
 ;;
 ;; The effective (flat) case list is computed by `effective-cases`:
-;;   [...latest-extension-cases, ...earlier-extension-cases, ...declaration-cases]
+;;   [...alphabetically-last-extension-cases, ..., ...declaration-cases]
 ;;
-;; This preserves the precedence semantics: most recently added wins.
-;; Extension ordering is by sorted namespace keys (deterministic).
+;; Extension ordering is alphabetical by namespace name (descending — later names win).
+;; This is deliberately deterministic and rebuild-safe, not temporal.
 ;;
 ;; `:cases` is kept as a derived field equal to `(effective-cases spec)`
 ;; for code that reads it directly.
 
 (defn effective-cases
   "Compute the flat case list from structured storage.
-   Returns cases in precedence order: latest extensions first, declaration last.
+   Returns cases in precedence order: alphabetically last namespace first, declaration last.
    Spec must have been initialized via init-spec (has :declaration-cases and :extension-cases)."
   [spec]
   (assert (:declaration-cases spec)
