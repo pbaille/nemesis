@@ -1,5 +1,17 @@
 # Knowledge Changelog
 
+## 2026-03-13T06:48 — P0 bug fixes applied (knowledge-daemon-37)
+
+- worker-p0-fixes fixed BUG-1 (Boolean class), BUG-2 (isa fallback), BUG-3 (childof/parentof)
+- Updated `modules/types.md` to mark all three as FIXED
+- BUG-4 (extension ordering) remains unfixed
+
+## 2026-03-13T06:36 — Bug hunter findings (knowledge-daemon-37)
+
+- Updated `modules/types.md` with 3 confirmed bugs (Boolean crash, isa silent nil, childof false positives) + dead code
+- Updated `modules/functions.md` with BUG-4 (alphabetical extension ordering)
+- Source: bug-hunter report (5 bugs: 1 crash, 2 high, 2 medium severity)
+
 ## 2026-03-13T06:30 — Docs/structure critic findings (knowledge-daemon-37)
 
 - Updated `modules/utils.md` with dead code + structure note (grab-bag concern)

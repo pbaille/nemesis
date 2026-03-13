@@ -24,7 +24,7 @@ Map of `{fullname → spec}`. Operations:
 ## functions/spec.clj (183 lines) — Spec Logic
 Core spec manipulation with structured case storage:
 - **Declaration vs extension cases**: `{:declaration-cases [...] :extension-cases {"ns" [...]}}`
-- `effective-cases` — computes flat case list: latest extensions first, declaration last
+- `effective-cases` — computes flat case list: extensions first, declaration last. **BUG-4**: ordering is reverse-alphabetical by namespace key, not temporal — docstring "latest wins" is wrong
 - `merge-cases` — merges extension cases with **mode enforcement**:
   - `:sealed` → throws
   - `:extend` → blocks overrides AND specializations (strictest)

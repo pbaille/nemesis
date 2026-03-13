@@ -10,17 +10,18 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 42,
-    "tokens": 998213,
+    "toolCalls": 51,
+    "tokens": 1275845,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-13T06:32:26.467Z",
-    "lastToolCall": "commit: chore: update crew board, mesh registry, and daemon state"
+    "lastActivityAt": "2026-03-13T06:49:56.919Z",
+    "lastToolCall": "commit: fix: boolean type class, isa macro silent nil, childof/parentof false positives"
   },
   "contextUsage": {
-    "tokens": 29485,
+    "tokens": 31667,
     "contextWindow": 200000,
-    "percent": 14.7425
-  }
+    "percent": 15.8335
+  },
+  "statusMessage": "just shipped"
 }
