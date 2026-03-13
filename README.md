@@ -134,7 +134,7 @@ Add to `deps.edn` (use latest SHA from [master](https://github.com/pbaille/theti
 
 ```bash
 clj -M:test                      # Run CLJ test suite
-npx shadow-cljs compile main     # Run CLJS tests
+npx shadow-cljs compile test && node out/test/runner.js  # Run CLJS test suite
 ```
 
 ## Status
