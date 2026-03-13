@@ -29,6 +29,25 @@ npx shadow-cljs compile main
 | Extension modes | `tries/four.cljc` | sealed, extend, refine, override — compile-time enforcement |
 | Guards | `tries/five.cljc` | defguard, predicate dispatch, guard + fork interaction |
 
+## Coverage Gaps (from test-auditor, 2026-03-13)
+
+**Completely untested:**
+- `thetis.types` — entire public API (parents, childs, isa, symbolic-pred, etc.)
+- `implements?` — user-facing type predicate, zero coverage
+- `reset-state!` / `prepare-state!` — build hooks, never invoked in tests
+- `register-type` standalone (only tested indirectly via `deft`)
+- Extension case ordering with competing namespaces
+- Reload semantics (duplicate contributions on hot-reload)
+
+**CLJS coverage is illusory:**
+- Tries are `.cljc` but asserts run via CLJ macroexpansion at load time
+- No real CLJS test runner (shadow-cljs `:karma`/`:browser` target)
+- `assert` can be silenced by `:elide-asserts true` in CLJS
+
+**Structural issue — assert is not a test framework:**
+- Tries use raw `assert`, not `clojure.test`/`deftest`/`is`
+- No test runner integration, failures lose context, no structured reporting
+
 ## Known Issues
 - **Test namespace mismatch**: Unit tests in `test/poly/` still use old `poly.*` namespace (project was renamed from poly → thetis). Imports reference `poly.types.core`, `poly.functions.spec`, etc. These will break unless there's a source path alias or the old namespaces still exist somewhere.
 - **`:test` alias added**: `deps.edn` now has a `:test` alias that requires all tries namespaces

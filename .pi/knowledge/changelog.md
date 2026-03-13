@@ -1,5 +1,23 @@
 # Knowledge Changelog
 
+## 2026-03-13T06:30 — Docs/structure critic findings (knowledge-daemon-37)
+
+- Updated `modules/utils.md` with dead code + structure note (grab-bag concern)
+- Updated `learnings.md`: extension ordering surprise, guard runtime overhead, undocumented types API
+- Source: docs-structure-critic report
+
+## 2026-03-13T06:29 — Dead code audit findings (knowledge-daemon-37)
+
+- Updated `modules/state.md` with dead code section (5 dead vars)
+- Updated `learnings.md`: confirmed test files orphaned, added dead code learning
+- Source: dead-code-detective report (24 dead items across 8 files)
+
+## 2026-03-13T06:28 — Test audit findings (knowledge-daemon-37)
+
+- Updated `testing.md` with coverage gaps from test-auditor report
+- Key gaps: thetis.types entirely untested, implements? zero coverage, CLJS coverage illusory
+- Structural issue: tries use raw assert instead of clojure.test framework
+
 ## 2026-03-12T13:01 — Test alias added (knowledge-daemon-37)
 
 - `deps.edn`: New `:test` alias added (runs all tries namespaces via `clj -M:test`)
