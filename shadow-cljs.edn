@@ -13,4 +13,11 @@
                       :pretty-print true}
 
    :build-hooks [(thetis.core/prepare-state!)]
-   :modules {:main {:entries [thetis.tries.two thetis.tries.three thetis.tries.four thetis.tries.five]}}}}}
+   :modules {:main {:entries [thetis.tries.two thetis.tries.three thetis.tries.four thetis.tries.five]}}}
+
+  :test
+  {:target :node-script
+   :output-to "out/test/runner.js"
+   :main thetis.tries.runner/-main
+   :build-hooks [(thetis.core/prepare-state!)]
+   :compiler-options {}}}}
