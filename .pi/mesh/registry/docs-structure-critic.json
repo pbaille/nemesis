@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "name": "docs-structure-critic",
+  "agentType": "agent",
+  "pid": 8764,
+  "sessionId": "e03f0b58-6887-4c02-b3dd-7b1f148634e5",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-sonnet-4-6",
+  "startedAt": "2026-03-13T06:25:31.967Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 21,
+    "tokens": 430505,
+    "filesModified": [
+      "/Users/pierrebaille/Code/WIP/thetis/.pi/crew/results/docs-structure-critic.md"
+    ]
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-13T06:29:53.635Z",
+    "lastToolCall": "write: results/docs-structure-critic.md"
+  },
+  "contextUsage": {
+    "tokens": 57581,
+    "contextWindow": 200000,
+    "percent": 28.7905
+  }
+}

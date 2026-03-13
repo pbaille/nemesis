@@ -10,17 +10,17 @@
   "gitBranch": "master",
   "isHuman": true,
   "session": {
-    "toolCalls": 35,
-    "tokens": 746986,
+    "toolCalls": 42,
+    "tokens": 998213,
     "filesModified": []
   },
   "activity": {
-    "lastActivityAt": "2026-03-12T12:16:32.299Z",
-    "lastToolCall": "commit: chore: update crew results, knowledge changelog, and mesh state"
+    "lastActivityAt": "2026-03-13T06:32:26.467Z",
+    "lastToolCall": "commit: chore: update crew board, mesh registry, and daemon state"
   },
   "contextUsage": {
-    "tokens": 26573,
+    "tokens": 29485,
     "contextWindow": 200000,
-    "percent": 13.2865
+    "percent": 14.7425
   }
 }

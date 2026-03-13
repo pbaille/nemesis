@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "name": "test-auditor",
+  "agentType": "agent",
+  "pid": 8306,
+  "sessionId": "6eea8d09-38d6-49dd-a681-b3dcdd2557c7",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-sonnet-4-6",
+  "startedAt": "2026-03-13T06:25:20.113Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 26,
+    "tokens": 430358,
+    "filesModified": [
+      "/Users/pierrebaille/Code/WIP/thetis/.pi/crew/results/test-auditor.md"
+    ]
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-13T06:28:28.713Z",
+    "lastToolCall": "write: results/test-auditor.md"
+  },
+  "contextUsage": {
+    "tokens": 51608,
+    "contextWindow": 200000,
+    "percent": 25.804
+  }
+}

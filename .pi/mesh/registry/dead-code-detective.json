@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "name": "dead-code-detective",
+  "agentType": "agent",
+  "pid": 7875,
+  "sessionId": "79406e62-96ad-4e1f-b837-d28d4a9ce9cd",
+  "cwd": "/Users/pierrebaille/Code/WIP/thetis",
+  "model": "claude-sonnet-4-6",
+  "startedAt": "2026-03-13T06:25:08.396Z",
+  "gitBranch": "master",
+  "isHuman": true,
+  "session": {
+    "toolCalls": 43,
+    "tokens": 1448491,
+    "filesModified": [
+      "/Users/pierrebaille/Code/WIP/thetis/.pi/crew/results/dead-code-detective.md"
+    ]
+  },
+  "activity": {
+    "lastActivityAt": "2026-03-13T06:29:05.778Z",
+    "lastToolCall": "write: results/dead-code-detective.md"
+  },
+  "contextUsage": {
+    "tokens": 62501,
+    "contextWindow": 200000,
+    "percent": 31.2505
+  }
+}
