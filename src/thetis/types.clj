@@ -20,9 +20,6 @@
 (defn get-reg []
   (state/get :types))
 
-(defn get-type-state []
-  (state/get :type-state))
-
 (defn get-type [t]
   (get (get-reg) t))
 
@@ -96,19 +93,6 @@
    (let [gsym (gensym)]
      `(let [~gsym ~seed]
         (when ~(symbolic-pred-body reg k gsym) ~gsym)))))
-
-(defn compile-pred-map
-  ([] (compile-pred-map (get-reg)))
-  ([reg]
-   (->> reg
-        (map (fn [[k _]] [k (symbolic-pred reg k)]))
-        (into {}))))
-
-(defn predmap
-  ([] (compile-pred-map (get-reg)))
-  ([reg] (compile-pred-map reg)))
-
-(def builtin-preds (predmap))
 
 (defmacro isa
   ([t] `(fn [x#] (isa ~t x#)))

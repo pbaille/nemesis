@@ -1,15 +1,10 @@
 (ns thetis.utils.misc
   "General utilities for thetis: symbol manipulation, fn-case normalization,
    CLJS JS interop helpers, macro helpers (defmac), and binding pattern utilities."
-  (:require [clojure.pprint :as pprint]
-            [clojure.walk :as walk]))
+  (:require [clojure.walk :as walk]))
 
 (defn error [& xs]
   (throw (new Exception (apply str xs))))
-
-(defn pp [& xs] (mapv pprint/pprint xs) (last xs))
-
-(defn pretty-str [& xs] (with-out-str (apply pp xs)))
 
 (do :cljs
 

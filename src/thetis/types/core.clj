@@ -150,12 +150,6 @@
 
 ;; === Guard (predicate type) support ===
 
-(defn make-guard-state
-  "Create a guard state."
-  []
-  {:base {}
-   :contributions {}})
-
 (defn effective-guards
   "Compute the flat guard map from base + all contributions."
   [guard-state]

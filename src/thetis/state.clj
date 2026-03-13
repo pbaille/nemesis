@@ -1,5 +1,5 @@
 (ns thetis.state
-  (:refer-clojure :exclude [reset! swap! get get-in])
+  (:refer-clojure :exclude [reset! swap! get])
   (:require [clojure.core :as c]
             [thetis.utils.expansion :as exp]
             [thetis.types.core :as types]
@@ -15,12 +15,6 @@
      :cljs base}))
 
 (def state (atom state0))
-
-;; A way to compile lambda case differently if needed.
-;; Used in 'with-compiled-cases if no overrides given.
-(def lambda-case-compiler* (atom identity))
-
-(defonce debug (atom nil))
 
 ;; === Expansion state ===
 ;;
@@ -48,9 +42,6 @@
   ([] (current))
   ([k] (c/get (current) k)))
 
-(defn get-in [p]
-  (c/get-in (current) p))
-
 (defn compilation-target []
   (if (cljs?) :cljs :clj))
 
@@ -61,12 +52,6 @@
   [& body]
   `(binding [*expansion-state* {:env ~'&env :form ~'&form}]
      ~@body))
-
-(defmacro targeting-cljs
-  "Force CLJS compilation target (for cross-compilation)."
-  [& xs]
-  `(binding [*expansion-state* {:env {:ns true}}]
-     ~@xs))
 
 ;; === State mutations ===
 
@@ -125,7 +110,4 @@
 
 (init-types!)
 
-;; === Debug ===
 
-(defmacro display []
-  (list 'quote @state))

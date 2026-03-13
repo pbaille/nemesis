@@ -11,10 +11,4 @@
    {:functions {}
     :types types}))
 
-(def clj-compiler
-  "A compiler initialized with Clojure base types and groups."
-  (make-compiler (merge type-data/clj-base-types type-data/groups)))
 
-(def cljs-compiler
-  "A compiler initialized with ClojureScript base types and groups."
-  (make-compiler (merge type-data/cljs-base-types type-data/groups)))

@@ -8,8 +8,7 @@
             [thetis.utils.expansion :as expansion]
             [thetis.compiler.core :as compiler]
             [thetis.types :as types]
-            [clojure.core :as c]
-            [clojure.set :as set]))
+            [clojure.core :as c]))
 
 (declare function-definition)
 
@@ -91,10 +90,7 @@
                'boolean  "boolean"
                'default  "_"}]
 
-          (letfn [(cljs_prototype-assoc-form [obj meth impl]
-                    (list 'js* "~{}[\"prototype\"][~{}] = ~{}" obj meth impl))
-
-                  (protocol-prefix [psym]
+          (letfn [(protocol-prefix [psym]
                     (str (-> (str psym)
                              (.replace \. \$)
                              (.replace \/ \$))
@@ -306,15 +302,6 @@
                    (map (partial thing_parse-impl-cases compiler) impls)))))
 
 (do :type-extension
-
-    (defn conj-type
-      "Add a type to a registry with its children and parent group memberships."
-      [reg {:keys [tag childs parents]}]
-      (reduce
-       (fn [reg p]
-         (update reg p (fnil conj #{}) tag))
-       (update reg tag (fnil into #{}) childs)
-       parents))
 
     (defn deft_impl-bind-fields
       "Transform a deft implementation body to destructure the record fields

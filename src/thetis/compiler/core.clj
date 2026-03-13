@@ -31,11 +31,6 @@
   [compiler spec]
   (fn.spec/class-extensions spec (:types compiler)))
 
-(defn implementers-map
-  "Map of generic-name → set of implementing types."
-  [compiler]
-  (fn.reg/implementers-map (:functions compiler)))
-
 ;; === Updates (compiler, args) → compiler' ===
 
 (defn add-function
@@ -61,18 +56,6 @@
    `members` must all be existing keys in the registry."
   [compiler tag members]
   (update compiler :types types/add-type tag members))
-
-(defn remove-type
-  "Remove a type from the type registry."
-  [compiler tag]
-  (update compiler :types types/remove-type tag))
-
-(defn update-types
-  "Apply an arbitrary function to the type registry.
-   For cases where add-type/remove-type aren't sufficient
-   (e.g. register-type with parent groups)."
-  [compiler f & args]
-  (apply update compiler :types f args))
 
 (defn remove-ns-contributions
   "Remove all contributions from a given namespace.
