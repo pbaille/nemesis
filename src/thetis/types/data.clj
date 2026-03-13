@@ -9,7 +9,7 @@
     :number #{java.lang.Number}
     :string #{java.lang.String}
     :symbol #{clojure.lang.Symbol}
-    :boolean #{clojure.lang.Boolean}
+    :boolean #{java.lang.Boolean}
     :keyword #{clojure.lang.Keyword}
     :map-entry #{clojure.lang.MapEntry}
     :seq #{clojure.lang.ISeq}

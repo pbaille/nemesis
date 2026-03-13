@@ -114,4 +114,5 @@
   ([t] `(fn [x#] (isa ~t x#)))
   ([t x]
    (cond (get-type t) `(~(symbolic-pred t) ~x)
-         (set? t) `(or ~@(map (fn [t] (macroexpand (list `isa t x))) t)))))
+         (set? t) `(or ~@(map (fn [t] (macroexpand (list `isa t x))) t))
+         :else (throw (ex-info (str "thetis.types/isa - Unknown type: " t) {:type t})))))

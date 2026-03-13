@@ -70,13 +70,13 @@
 (defn childof
   "is x a child of y?"
   [reg x y]
-  (when (set/subset? (set (children reg x)) (set (children reg y)))
+  (when (some #{x} (children reg y))
     x))
 
 (defn parentof
   "is x a parent of y?"
   [reg x y]
-  (when (set/subset? (set (children reg y)) (set (children reg x)))
+  (when (some #{y} (children reg x))
     x))
 
 (defn classes
